@@ -1,0 +1,17 @@
+{
+  "name": "SpigotUpdatesBot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Lorenzo0111/SpigotUpdatesBot.git",
+  "author": "Lorenzo0111",
+  "license": "MIT",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "dependencies": {
+    "axios": "^0.25.0",
+    "discord.js": "^13.6.0",
+    "fs": "^0.0.1-security",
+    "nodemon": "^2.0.15"
+  }
+}
