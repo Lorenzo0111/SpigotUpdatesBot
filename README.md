@@ -1,5 +1,5 @@
 # SpigotUpdatesBot
-![Discord](https://img.shields.io/discord/737993529795674182)
+[![Discord](https://img.shields.io/discord/737993529795674182)](https://discord.io/RocketPlugins)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/Lorenzo0111/SpigotUpdatesBot)
 
 
