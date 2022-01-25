@@ -12,7 +12,7 @@ const bot = new Client({
 	]
 });
 
-bot.config = require('./config.json');
+bot.config = require('./config.js');
 const noWebhook = process.argv.find(arg => arg === "--load-config") != null;
 
 if (noWebhook) {
