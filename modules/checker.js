@@ -21,7 +21,7 @@ async function checkNow(client,noWebhook = false) {
             plugin.latestVersion = data.id;
             needsSave = true;
             if (!noWebhook) {
-                sendWebhook(plugin,data);
+                sendWebhook(client,plugin,data);
             }
         }
     }
@@ -31,7 +31,7 @@ async function checkNow(client,noWebhook = false) {
     }
 }
 
-async function sendWebhook(plugin, response) {
+async function sendWebhook(client, plugin, response) {
     console.log("[・] Sending webhook for " + response.id);
 
     const {data} = await axios.get("https://api.spiget.org/v2/resources/" + plugin.id);
@@ -39,15 +39,7 @@ async function sendWebhook(plugin, response) {
 
     const embed = new MessageEmbed()
 	.setTitle('📰・' + data.name + ' Update')
-    .setDescription(`**📋・About**
-    > Version: ${version.data.name}
-    > Title: ${response.title}
-    
-    **📦・Download**
-    > https://www.spigotmc.org/resources/${plugin.id}
-    
-    **📌・Pings**
-    > <@&743466440899821771>`)
+    .setDescription(client.config.message.replace("{version}", version.data.name).replace("{title}",response.title).replace("{plugin}",plugin.id))
     .setTimestamp()
     .setFooter({
         text: "Spigot • Updates",

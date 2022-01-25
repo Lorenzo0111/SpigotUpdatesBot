@@ -5,7 +5,7 @@
 
 ## Getting started
   - Run `git clone https://github.com/Lorenzo0111/SpigotUpdatesBot`
-  - Create a file named config.json and fill with all the options of the example.config.json
+  - Create a file named config.js and fill with all the options of the example.config.js
   - Run `yarn install`
   - Run `yarn loadConfig`
   - Run `yarn start` to start the bot
