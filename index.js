@@ -2,10 +2,10 @@ const { Client, Intents } = require('discord.js');
 const bot = new Client({
 	presence: {
 		status: 'online',
-		activity: {
-			name: `SpigotMC`,
-			type: 'WATCHING'
-		}
+        activities: [{
+            name: `SpigotMC`,
+            type: 'WATCHING'
+        }]
 	},
 	intents: [
 		Intents.FLAGS.GUILDS
