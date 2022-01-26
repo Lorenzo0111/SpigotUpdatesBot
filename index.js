@@ -12,11 +12,12 @@ const bot = new Client({
 	]
 });
 
-bot.config = require('./config.js');
 const noWebhook = process.argv.find(arg => arg === "--load-config") != null;
+bot.config = noWebhook ? require('./config.js') : require('./config.json');
 
 if (noWebhook) {
 	console.log("Found load config command. Loading the config..")
+	console.log("Remember that if you need to edit the config you'll have to run this command again")
 }
 
 bot.on('ready', () => {
