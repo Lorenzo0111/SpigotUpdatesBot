@@ -1,10 +1,10 @@
 const axios = require('axios').default;
 const fs = require('fs');
-const {MessageEmbed,WebhookClient, SystemChannelFlags} = require('discord.js');
+const {MessageEmbed,WebhookClient} = require('discord.js');
 
-module.exports = async (client,noWebhook) => {
-    if (noWebhook) {
-        await checkNow(client, noWebhook);
+module.exports = async (client) => {
+    if (client.noWebhook) {
+        await checkNow(client, client.noWebhook);
         process.exit(0);
     }
 
