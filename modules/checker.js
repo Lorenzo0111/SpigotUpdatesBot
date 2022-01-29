@@ -11,16 +11,25 @@ async function checkNow(client) {
     let needsSave = false;
 
     for (let index in client.config.plugins) {
+        let webhook = true;
         const plugin = client.config.plugins[index];
-        const pluginData = client.data[plugin.id] || {latest: null};
+        const pluginData = client.data[plugin.id];
+
+        if (pluginData == null) {
+            pluginData = {latest: null};
+            client.data[plugin.id] = pluginData;
+            needsSave = true;
+            webhook = false;
+        }
+
         const {data} = await axios.get("https://api.spiget.org/v2/resources/" + plugin.id + "/updates/latest?size=1");
         if (pluginData.latest != data.id) {
             pluginData.latest = data.id;
             needsSave = true;
-            sendWebhook(client,plugin,data);
+            if (webhook) {
+                sendWebhook(client,plugin,data);
+            }
         }
-
-        client.data[plugin.id] = pluginData;
     }
 
     if (needsSave) {
