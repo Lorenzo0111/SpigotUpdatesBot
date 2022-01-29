@@ -13,7 +13,7 @@ async function checkNow(client) {
     for (let index in client.config.plugins) {
         let webhook = true;
         const plugin = client.config.plugins[index];
-        const pluginData = client.data[plugin.id];
+        let pluginData = client.data[plugin.id];
 
         if (pluginData == null) {
             pluginData = {latest: null};
