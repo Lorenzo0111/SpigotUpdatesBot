@@ -6,20 +6,13 @@
 
 ## Getting started
   - Run `git clone https://github.com/Lorenzo0111/SpigotUpdatesBot`
-  - Create a file named config.js and fill with all the options of the example.config.js
+  - Create a file named config.json and fill with all the options of the example.config.json
   - Run `yarn install`
-  - Run `yarn loadConfig`
   - Run `yarn start` to start the bot
 
 ## Keep the bot online
   - Install pm2 with `npm i -g pm2`
   - Run `pm2 start index.js`
-
-## Editing the configuration file
-> Remember to not edit the config.json directly, use the config.js file instead.
-
-  - Edit the config.js file
-  - Run `yarn loadConfig` to load the configuration file
 
 ## FAQ
 ### When does the public option mean?

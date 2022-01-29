@@ -1,0 +1,12 @@
+{
+    "token": "",
+    "public": false,
+    "plugins": [
+        {
+            "id": "spigotID",
+            "server": "1234",
+            "channel": "1234"
+        }
+    ],
+	"message": "**📋・About**\n> Version: {version}\n> Title: {title}\n\n**📦・Download**\n> https://www.spigotmc.org/resources/{plugin}\n\n**📌・Pings**\n> pinghere"
+}
