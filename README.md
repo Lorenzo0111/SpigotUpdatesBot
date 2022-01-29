@@ -20,3 +20,7 @@
 
   - Edit the config.js file
   - Run `yarn loadConfig` to load the configuration file
+
+## FAQ
+### When does the public option mean?
+  If set to true, everyone will be able to add his plugin and his server and channel to the bot, so everyone will have the ability to use it.

@@ -1,6 +1,6 @@
 const { Client, Intents } = require('discord.js');
 const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
+const { Routes, ChannelType } = require('discord-api-types/v9');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Logger = require('./utils/Logger');
 const fs = require('fs');
@@ -17,14 +17,13 @@ const bot = new Client({
 	]
 });
 
-bot.noWebhook = process.argv.find(arg => arg === "--load-config") != null;
-bot.config = bot.noWebhook ? require('./config.js') : require('./config.json');
-bot.logger = new Logger(console.log);
-
-if (bot.noWebhook) {
-	bot.logger.info("Found load config command. Loading the config..")
-	bot.logger.info("Remember that if you need to edit the config you'll have to run this command again")
+if (!fs.existsSync('data.json')) {
+	fs.writeFileSync('data.json', JSON.stringify({}));
 }
+
+bot.config = require('./config.json');
+bot.data = require('./data.json');
+bot.logger = new Logger(console.log);
 
 const commands = [new SlashCommandBuilder()
 	.setName('version')
@@ -34,16 +33,26 @@ const commands = [new SlashCommandBuilder()
 			.setDescription('The plugin name')
 			.setRequired(true)).toJSON()]
 
+if (bot.config.public) {
+	commands.push(new SlashCommandBuilder()
+	.setName('add')
+	.setDescription('Adds a plugin to the list to check')
+	.addIntegerOption(option => 
+		option.setName('plugin')
+		.setDescription('The plugin id')
+		.setRequired(true))
+	.addChannelOption(option =>
+		option.setName('channel')
+		.setDescription('The channel id')
+		.setRequired(true)
+		.addChannelType(ChannelType.GuildText)).toJSON());
+}
+
 const rest = new REST({ version: '9' }).setToken(bot.config.token);
 
 bot.on('ready',() => {
 	bot.logger.info(`Logged in as ${bot.user.tag}.`)
 	bot.logger.info(`You can invite the bot with the following link: https://discord.com/api/oauth2/authorize?client_id=${bot.user.id}&permissions=117760&scope=bot%20applications.commands`)
-
-	if (bot.noWebhook) {
-		require('./modules/checker')(bot);
-		return;
-	}
 
 	fs.readdirSync('modules')
     .map(mod => {

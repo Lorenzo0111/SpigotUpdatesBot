@@ -3,31 +3,28 @@ const fs = require('fs');
 const {MessageEmbed,WebhookClient} = require('discord.js');
 
 module.exports = async (client) => {
-    await checkNow(client, client.noWebhook);
-    if (client.noWebhook) {
-        process.exit(0);
-    }
-
+    await checkNow(client);
     setInterval(() => checkNow(client), 30 * 60 * 1000);
 }
 
-async function checkNow(client,noWebhook = false) {
+async function checkNow(client) {
     let needsSave = false;
 
     for (let index in client.config.plugins) {
         const plugin = client.config.plugins[index];
+        const pluginData = client.data[plugin.id] || {latest: null};
         const {data} = await axios.get("https://api.spiget.org/v2/resources/" + plugin.id + "/updates/latest?size=1");
-        if (plugin.latestVersion != data.id) {
-            plugin.latestVersion = data.id;
+        if (pluginData.latest != data.id) {
+            pluginData.latest = data.id;
             needsSave = true;
-            if (!noWebhook) {
-                sendWebhook(client,plugin,data);
-            }
+            sendWebhook(client,plugin,data);
         }
+
+        client.data[plugin.id] = pluginData;
     }
 
     if (needsSave) {
-        fs.writeFileSync("config.json", JSON.stringify(client.config));
+        fs.writeFileSync("data.json", JSON.stringify(client.data, null, '\t'));
     }
 }
 
@@ -55,8 +52,8 @@ async function sendWebhook(client, plugin, response) {
             username: data.name + " | Updates",
             embeds: [embed]
         });
-    } else if (plugin.channel != null && client.config.server != null) {
-        const guild = client.guilds.cache.get(client.config.server);
+    } else if (plugin.channel != null && plugin.server != null) {
+        const guild = client.guilds.cache.get(plugin.server);
         if (guild != null) {
             const channel = guild.channels.cache.get(plugin.channel);
             

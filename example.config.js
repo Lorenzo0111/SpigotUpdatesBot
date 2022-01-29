@@ -1,10 +1,10 @@
 module.exports = {
     "token": "",
-    "server": "1234",
+    "public": false,
     "plugins": [
         {
             "id": "spigotID",
-            "latestVersion": null,
+            "server": "1234",
             "channel": "1234"
         }
     ],
