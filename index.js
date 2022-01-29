@@ -2,6 +2,7 @@ const { Client, Intents } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { SlashCommandBuilder } = require('@discordjs/builders');
+const Logger = require('./utils/Logger');
 const fs = require('fs');
 const bot = new Client({
 	presence: {
@@ -18,10 +19,11 @@ const bot = new Client({
 
 bot.noWebhook = process.argv.find(arg => arg === "--load-config") != null;
 bot.config = bot.noWebhook ? require('./config.js') : require('./config.json');
+bot.logger = new Logger(console.log);
 
 if (bot.noWebhook) {
-	console.log("Found load config command. Loading the config..")
-	console.log("Remember that if you need to edit the config you'll have to run this command again")
+	bot.logger.info("Found load config command. Loading the config..")
+	bot.logger.info("Remember that if you need to edit the config you'll have to run this command again")
 }
 
 const commands = [new SlashCommandBuilder()
@@ -35,7 +37,8 @@ const commands = [new SlashCommandBuilder()
 const rest = new REST({ version: '9' }).setToken(bot.config.token);
 
 bot.on('ready',() => {
-	console.log(`Logged in as ${bot.user.tag}.`)
+	bot.logger.info(`Logged in as ${bot.user.tag}.`)
+	bot.logger.info(`You can invite the bot with the following link: https://discord.com/api/oauth2/authorize?client_id=${bot.user.id}&permissions=117760&scope=bot%20applications.commands`)
 
 	if (bot.noWebhook) {
 		require('./modules/checker')(bot);
@@ -44,7 +47,7 @@ bot.on('ready',() => {
 
 	fs.readdirSync('modules')
     .map(mod => {
-      console.log("[+] Loaded " + mod)
+      bot.logger.info("[+] Loaded " + mod)
       return `./modules/${mod}`;
     })
     .map(mod => require(mod))
@@ -58,7 +61,7 @@ bot.on('ready',() => {
 						{ body: commands },
 					);
 				} catch (error) {
-					console.error("Error while trying to load commands. Are you missing the Commands permission?");
+					bot.logger.error("Error while trying to load commands. Are you missing the Commands permission?");
 				}
 		});
 	})();

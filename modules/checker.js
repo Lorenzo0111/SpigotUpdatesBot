@@ -3,8 +3,8 @@ const fs = require('fs');
 const {MessageEmbed,WebhookClient} = require('discord.js');
 
 module.exports = async (client) => {
+    await checkNow(client, client.noWebhook);
     if (client.noWebhook) {
-        await checkNow(client, client.noWebhook);
         process.exit(0);
     }
 
@@ -32,7 +32,7 @@ async function checkNow(client,noWebhook = false) {
 }
 
 async function sendWebhook(client, plugin, response) {
-    console.log("[・] Sending webhook for " + response.id);
+    client.logger.info("[・] Sending " + (plugin.webhook != null ? "webhook" : "message" ) + " for " + plugin.id);
 
     const {data} = await axios.get("https://api.spiget.org/v2/resources/" + plugin.id);
     const version = await axios.get("https://api.spiget.org/v2/resources/" + plugin.id + "/versions/latest");
@@ -47,9 +47,30 @@ async function sendWebhook(client, plugin, response) {
     })
 	.setColor('#ff9900');
 
-    const webhook = new WebhookClient({ url: plugin.webhook });
-    await webhook.send({
-        username: data.name + " | Updates",
-        embeds: [embed]
-    });
+    if (plugin.webhook != null) {
+        client.logger.warning("You are using a deprecated method: webhook. Please use the channel id instead.")
+
+        const webhook = new WebhookClient({ url: plugin.webhook });
+        await webhook.send({
+            username: data.name + " | Updates",
+            embeds: [embed]
+        });
+    } else if (plugin.channel != null && client.config.server != null) {
+        const guild = client.guilds.cache.get(client.config.server);
+        if (guild != null) {
+            const channel = guild.channels.cache.get(plugin.channel);
+            
+            if (channel != null) {
+                channel.send({
+                    embeds: [embed]
+                });
+            } else {
+                client.logger.error("Cannot find a channel with that id. Aborting..");
+            }
+        } else {
+            client.logger.error("Cannot find a server with that id. Aborting..");
+        }
+    } else {
+        client.logger.error("Cannot find a method to send the message to the server. Please set a channel id and a server id. Read the example.config.js for more information.");
+    }
 }

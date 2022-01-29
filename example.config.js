@@ -1,10 +1,11 @@
 module.exports = {
     "token": "",
+    "server": "1234",
     "plugins": [
         {
             "id": "spigotID",
             "latestVersion": null,
-            "webhook": "https://discord.com/api/webhooks/xxxxx/xxxxx"
+            "channel": "1234"
         }
     ],
     "message": `**📋・About**
