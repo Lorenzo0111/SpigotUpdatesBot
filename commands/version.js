@@ -11,7 +11,7 @@ module.exports = {
             return;
         }
 
-        command.deferReply();
+        await command.deferReply();
 
         const resource = await axios.get("https://api.spiget.org/v2/search/resources/" + plugin + "?limit=1&sort=downloads");
 
