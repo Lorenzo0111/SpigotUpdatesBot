@@ -1,3 +1,5 @@
+const BOOT = new Date().getTime(); 
+
 const { Client, Intents } = require('discord.js');
 const { REST } = require('@discordjs/rest');
 const { Routes, ChannelType } = require('discord-api-types/v9');
@@ -77,11 +79,12 @@ bot.on('ready',() => {
 		});
 	})();
 
-	bot.logger.info("[+] Loaded all modules");
-
 	if (bot.config.api.enabled) {
 		bot.logger.info("[+] Starting API server");
 		new Webserver(bot).start();
 	}
+
+	bot.logger.info("[+] Loaded all modules");
+	bot.logger.info("[+] Ready in " + (new Date().getTime() - BOOT) / 1000 + " seconds!");
 });
 bot.login(bot.config.token);
