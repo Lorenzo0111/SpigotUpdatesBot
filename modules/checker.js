@@ -35,6 +35,7 @@ async function checkNow(client) {
     if (needsSave) {
         fs.writeFileSync("data.json", JSON.stringify(client.data, null, '\t'));
     }
+    client.lastCheck = new Date().getTime();
 }
 
 async function sendWebhook(client, plugin, response) {
