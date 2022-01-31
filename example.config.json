@@ -1,6 +1,10 @@
 {
     "token": "",
     "public": false,
+    "api": {
+        "enabled": false,
+        "port": 8080
+    },
     "plugins": [
         {
             "id": "spigotID",

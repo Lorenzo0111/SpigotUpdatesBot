@@ -3,6 +3,7 @@ const { REST } = require('@discordjs/rest');
 const { Routes, ChannelType } = require('discord-api-types/v9');
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Logger = require('./utils/Logger');
+const Webserver = require('./utils/Webserver');
 const fs = require('fs');
 const bot = new Client({
 	presence: {
@@ -13,7 +14,7 @@ const bot = new Client({
         }]
 	},
 	intents: [
-		Intents.FLAGS.GUILDS
+		Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS
 	]
 });
 
@@ -21,6 +22,7 @@ if (!fs.existsSync('data.json')) {
 	fs.writeFileSync('data.json', JSON.stringify({}));
 }
 
+bot.version = "1.2";
 bot.config = require('./config.json');
 bot.data = require('./data.json');
 bot.logger = new Logger(console.log);
@@ -74,5 +76,12 @@ bot.on('ready',() => {
 				}
 		});
 	})();
+
+	bot.logger.info("[+] Loaded all modules");
+
+	if (bot.config.api.enabled) {
+		bot.logger.info("[+] Starting API server");
+		new Webserver(bot).start();
+	}
 });
 bot.login(bot.config.token);
