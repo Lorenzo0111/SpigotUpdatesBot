@@ -24,7 +24,7 @@ if (!fs.existsSync('data.json')) {
 	fs.writeFileSync('data.json', JSON.stringify({}));
 }
 
-bot.version = "1.2";
+bot.version = "1.2.1";
 bot.config = require('./config.json');
 bot.data = require('./data.json');
 bot.logger = new Logger(console.log);

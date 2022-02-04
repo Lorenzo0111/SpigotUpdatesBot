@@ -5,6 +5,7 @@ module.exports = class WebServer {
         this.bot = bot;
         const app = require('express')();
         app.use(require('helmet')());
+        app.use(require('cors')())
         const limiter = rateLimit({
             windowMs: 15 * 60 * 1000,
             max: 10,
