@@ -29,7 +29,7 @@ bot.config = require('./config.json');
 bot.data = require('./data.json');
 bot.logger = new Logger(console.log);
 
-const commands = [new SlashCommandBuilder()
+bot.commands = [new SlashCommandBuilder()
 	.setName('version')
 	.setDescription('Retrieves the latest version of a plugin')
 	.addStringOption(option =>
@@ -38,7 +38,7 @@ const commands = [new SlashCommandBuilder()
 			.setRequired(true)).toJSON()]
 
 if (bot.config.public) {
-	commands.push(new SlashCommandBuilder()
+	bot.commands.push(new SlashCommandBuilder()
 	.setName('add')
 	.setDescription('Adds a plugin to the list to check')
 	.addIntegerOption(option => 
@@ -52,7 +52,7 @@ if (bot.config.public) {
 		.addChannelType(ChannelType.GuildText)).toJSON());
 }
 
-const rest = new REST({ version: '9' }).setToken(bot.config.token);
+bot.rest = new REST({ version: '9' }).setToken(bot.config.token);
 
 bot.on('ready',() => {
 	bot.logger.info(`Logged in as ${bot.user.tag}.`)
@@ -69,9 +69,9 @@ bot.on('ready',() => {
 	(async () => {
 		bot.guilds.cache.forEach(guild => {
 			try {				
-				rest.put(
+				bot.rest.put(
 					Routes.applicationGuildCommands(bot.user.id, guild.id),
-						{ body: commands },
+						{ body: bot.commands },
 					);
 				} catch (error) {
 					bot.logger.error("Error while trying to load commands. Are you missing the Commands permission?");
