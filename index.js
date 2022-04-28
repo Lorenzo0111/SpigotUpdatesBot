@@ -52,7 +52,7 @@ if (bot.config.public) {
 		.addChannelType(ChannelType.GuildText)).toJSON());
 }
 
-bot.rest = new REST({ version: '9' }).setToken(bot.config.token);
+const rest = new REST({ version: '9' }).setToken(bot.config.token);
 
 bot.on('ready',() => {
 	bot.logger.info(`Logged in as ${bot.user.tag}.`)
@@ -69,7 +69,7 @@ bot.on('ready',() => {
 	(async () => {
 		bot.guilds.cache.forEach(guild => {
 			try {				
-				bot.rest.put(
+				rest.put(
 					Routes.applicationGuildCommands(bot.user.id, guild.id),
 						{ body: bot.commands },
 					);
