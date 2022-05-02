@@ -35,7 +35,7 @@ module.exports = {
         }
 
         try {
-            const {data} = await axios.get("https://api.spiget.org/v2/resources/" + plugin + "/updates/latest?size=1");
+            const {data} = await axios.get("https://api.spiget.org/v2/resources/" + encodeURIComponent(plugin) + "/updates/latest?size=1");
             client.config.plugins[client.config.plugins.length] = {
                 "id": plugin,
                 "server": channel.guild.id,
