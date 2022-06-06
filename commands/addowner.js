@@ -51,13 +51,19 @@ module.exports = {
                 const element = await Plugin.findOne({server:command.guild.id,id: plugin.id,channel:channel.id}).exec();
 
                 if (!element) {
-                    const {data: updateData} = await axios.get("https://api.spiget.org/v2/resources/" + encodeURIComponent(plugin.id) + "/updates/latest?size=1");            
+                    let updateId = null;
+
+                    try {
+                        const {data: updateData} = await axios.get("https://api.spiget.org/v2/resources/" + encodeURIComponent(plugin.id) + "/updates/latest?size=1");            
+
+                        updateId = updateData.id;
+                    } catch (ignored) {}
 
                     new Plugin({
                         id: plugin.id,
                         server: channel.guild.id,
                         channel: channel.id,
-                        latest: updateData.id,
+                        latest: updateId,
                         ping: ping != null ? ping.id : null
                     }).save();
 
