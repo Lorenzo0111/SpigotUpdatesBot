@@ -66,7 +66,8 @@ bot.commands = [
 				option.setName('channel')
 					.setDescription('The channel id')
 					.setRequired(true)
-					.addChannelType(ChannelType.GuildText))
+					.addChannelType(ChannelType.GuildText)
+					.addChannelType(ChannelType.GuildNews))
 			.addRoleOption(option =>
 				option.setName("ping")
 				.setDescription("The role to ping when a new update is released")
