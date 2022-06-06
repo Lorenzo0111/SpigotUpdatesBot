@@ -7,6 +7,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const Logger = require('./utils/Logger');
 const Webserver = require('./utils/Webserver');
 const fs = require('fs');
+const { connect } = require("mongoose");
 const bot = new Client({
 	presence: {
 		status: 'online',
@@ -16,47 +17,53 @@ const bot = new Client({
         }]
 	},
 	intents: [
-		Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS
+		Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS
 	]
 });
 
-if (!fs.existsSync('data.json')) {
-	fs.writeFileSync('data.json', JSON.stringify({}));
-}
-
 bot.version = "1.2.2";
 bot.config = require('./config.json');
-bot.data = require('./data.json');
 bot.logger = new Logger(console.log);
 
-bot.commands = [new SlashCommandBuilder()
-	.setName('version')
-	.setDescription('Retrieves the latest version of a plugin')
-	.addStringOption(option =>
-		option.setName('plugin')
-			.setDescription('The plugin name')
-			.setRequired(true)).toJSON()]
+bot.commands = [
+	new SlashCommandBuilder()
+		.setName('plugin')
+		.setDescription('Retrieves the information of a plugin')
+		.addStringOption(option =>
+			option.setName('plugin')
+				.setDescription('The plugin name')
+				.setRequired(true))
+		.toJSON(),
+	
+	new SlashCommandBuilder()
+			.setName('add')
+			.setDescription('Adds a plugin to the list to check')
+			.addIntegerOption(option => 
+				option.setName('plugin')
+					.setDescription('The plugin id')
+					.setRequired(true))
+			.addChannelOption(option =>
+				option.setName('channel')
+					.setDescription('The channel id')
+					.setRequired(true)
+					.addChannelType(ChannelType.GuildText))
+			.addRoleOption(option =>
+				option.setName("ping")
+				.setDescription("The role to ping when a new update is released")
+				.setRequired(false))
+			.toJSON(),
+		
+		new SlashCommandBuilder()
+			.setName('checknow')
+			.setDescription('Forces the check of updates')
+			.toJSON(),
+	]
 
-if (bot.config.public) {
-	bot.commands.push(new SlashCommandBuilder()
-	.setName('add')
-	.setDescription('Adds a plugin to the list to check')
-	.addIntegerOption(option => 
-		option.setName('plugin')
-		.setDescription('The plugin id')
-		.setRequired(true))
-	.addChannelOption(option =>
-		option.setName('channel')
-		.setDescription('The channel id')
-		.setRequired(true)
-		.addChannelType(ChannelType.GuildText)).toJSON());
-}
-
-const rest = new REST({ version: '9' }).setToken(bot.config.token);
+bot.restAPI = new REST({ version: '9' }).setToken(bot.config.token);
 
 bot.on('ready',() => {
 	bot.logger.info(`Logged in as ${bot.user.tag}.`)
-	bot.logger.info(`You can invite the bot with the following link: https://discord.com/api/oauth2/authorize?client_id=${bot.user.id}&permissions=117760&scope=bot%20applications.commands`)
+	bot.logger.info(`You can invite the bot with the following link: https://discord.com/api/oauth2/authorize?client_id=${bot.user.id}&permissions=537151488&scope=bot%20applications.commands`)
 
 	fs.readdirSync('modules')
     .map(mod => {
@@ -69,7 +76,7 @@ bot.on('ready',() => {
 	(async () => {
 		bot.guilds.cache.forEach(guild => {
 			try {				
-				rest.put(
+				bot.restAPI.put(
 					Routes.applicationGuildCommands(bot.user.id, guild.id),
 						{ body: bot.commands },
 					);
@@ -77,6 +84,8 @@ bot.on('ready',() => {
 					bot.logger.error("Error while trying to load commands. Are you missing the Commands permission?");
 				}
 		});
+
+		bot.logger.info("[+] Loaded commands");
 	})();
 
 	if (bot.config.api.enabled) {
@@ -87,4 +96,7 @@ bot.on('ready',() => {
 	bot.logger.info("[+] Loaded all modules");
 	bot.logger.info("[+] Ready in " + (new Date().getTime() - BOOT) / 1000 + " seconds!");
 });
-bot.login(bot.config.token);
+
+connect(bot.config.database, () => {
+	bot.login(bot.config.token);
+});

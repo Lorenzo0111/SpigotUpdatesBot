@@ -5,12 +5,6 @@
         "enabled": false,
         "port": 8080
     },
-    "plugins": [
-        {
-            "id": "spigotID",
-            "server": "1234",
-            "channel": "1234"
-        }
-    ],
-	"message": "**📋・About**\n> Version: {version}\n> Title: {title}\n\n**📦・Download**\n> https://www.spigotmc.org/resources/{plugin}\n\n**📌・Pings**\n> pinghere"
+	"database": "mongodb://localhost:27017/sub",
+    "message": "**📋・About**\n> Version: {version}\n> Title: {title}\n\n**📦・Download**\n> https://www.spigotmc.org/resources/{plugin}"
 }

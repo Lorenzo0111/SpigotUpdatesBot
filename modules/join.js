@@ -3,7 +3,7 @@ const { Routes } = require('discord-api-types/v9');
 module.exports = async (client) => {
     client.on('guildCreate', async guild => {
         try {				
-            client.rest.put(
+            client.restAPI.put(
                 Routes.applicationGuildCommands(client.user.id, guild.id),
                     { body: client.commands },
                 );

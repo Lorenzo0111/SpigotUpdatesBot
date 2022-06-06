@@ -36,10 +36,11 @@ module.exports = {
         .setDescription(`${resourceObj.name} v${latestVersion.name}
         
         🛠️ Latest Version: ${latestVersion.name}
-        📦 Downloads: ${latestVersion.downloads}
-        ⭐ Ratings: ${latestVersion.rating.average}
+        📦 Downloads: ${resourceObj.downloads}
+        ⭐ Ratings: ${resourceObj.rating.average}
         
-        [📦 Download Now](https://www.spigotmc.org/resources/${resourceObj.id})`);
+        [📦 Download Now](https://www.spigotmc.org/resources/${resourceObj.id})`)
+        .setColor('#ff9900');
 
         command.editReply({
             embeds: [embed]
