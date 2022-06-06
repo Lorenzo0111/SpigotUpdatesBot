@@ -8,6 +8,7 @@ const Logger = require('./utils/Logger');
 const Webserver = require('./utils/Webserver');
 const fs = require('fs');
 const { connect } = require("mongoose");
+const Plugin = require("./database/Plugin");
 const bot = new Client({
 	presence: {
 		status: 'online',
@@ -41,6 +42,24 @@ bot.commands = [
 			.addIntegerOption(option => 
 				option.setName('plugin')
 					.setDescription('The plugin id')
+					.setRequired(true))
+			.addChannelOption(option =>
+				option.setName('channel')
+					.setDescription('The channel id')
+					.setRequired(true)
+					.addChannelType(ChannelType.GuildText))
+			.addRoleOption(option =>
+				option.setName("ping")
+				.setDescription("The role to ping when a new update is released")
+				.setRequired(false))
+			.toJSON(),
+
+		new SlashCommandBuilder()
+			.setName('addowner')
+			.setDescription('Adds all the plugins of an user to the list to check')
+			.addIntegerOption(option => 
+				option.setName('user')
+					.setDescription('The user id')
 					.setRequired(true))
 			.addChannelOption(option =>
 				option.setName('channel')
@@ -90,6 +109,10 @@ bot.on('ready',() => {
 
 	if (bot.config.api.enabled) {
 		bot.logger.info("[+] Starting API server");
+		bot.pluginCount = 0;
+		Plugin.count().exec().then(count => {
+			bot.pluginCount = count
+		});
 		new Webserver(bot).start();
 	}
 

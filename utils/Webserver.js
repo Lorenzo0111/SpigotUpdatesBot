@@ -38,7 +38,7 @@ module.exports = class WebServer {
             res.json({
                 servers: bot.guilds.cache.size,
                 totalMembers: members,
-                plugins: bot.config.plugins.length,
+                plugins: bot.pluginCount || 0,
                 lastCheck: bot.lastCheck
             });
         });

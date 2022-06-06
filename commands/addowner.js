@@ -3,13 +3,13 @@ const {Permissions, MessageEmbed} = require('discord.js');
 const Plugin = require('../database/Plugin');
 
 module.exports = {
-    name: 'add',
+    name: 'addowner',
     executor: async (client,command) => {
         if (!client.config.public) {
             command.reply("This command is only available in private bots.");
             return;
         }
-        const plugin = command.options.getInteger('plugin') || 0;
+        const user = command.options.getInteger('user') || 0;
         const channel = command.options.getChannel('channel');
         const ping = command.options.getRole('ping') || null;
 
@@ -24,10 +24,10 @@ module.exports = {
             return;
         }
 
-        if (plugin === 0) {
+        if (user === 0) {
             command.editReply({
                 embeds: [new MessageEmbed()
-                    .setTitle("<:severe:926091008645664848> You must specify a plugin id.")
+                    .setTitle("<:severe:926091008645664848> You must specify a user id.")
                     .setColor('#ff9900')]
             });
             return;
@@ -43,27 +43,39 @@ module.exports = {
         }
 
         try {
-            const {data} = await axios.get("https://api.spiget.org/v2/resources/" + encodeURIComponent(plugin) + "/updates/latest?size=1");            
-            new Plugin({
-                id: plugin,
-                server: channel.guild.id,
-                channel: channel.id,
-                latest: data.id,
-                ping: ping != null ? ping.id : null
-            }).save();
+            const {data} = await axios.get("https://api.spiget.org/v2/authors/" + encodeURIComponent(user) + "/resources?size=100");            
+            let added = 0;
+
+            for (let index in data) {
+                const plugin = data[index];
+                const element = await Plugin.findOne({server:command.guild.id,id: plugin.id,channel:channel.id}).exec();
+
+                if (!element) {
+                    const {data: updateData} = await axios.get("https://api.spiget.org/v2/resources/" + encodeURIComponent(plugin.id) + "/updates/latest?size=1");            
+
+                    new Plugin({
+                        id: plugin.id,
+                        server: channel.guild.id,
+                        channel: channel.id,
+                        latest: updateData.id,
+                        ping: ping != null ? ping.id : null
+                    }).save();
+
+                    added++;
+                }
+            }
             
             command.editReply({
                 embeds: [new MessageEmbed()
-                    .setTitle("<a:tick:983296047965151273> Plugin added successfully!")
+                    .setTitle(`<a:tick:983296047965151273> Successfully added ${added} plugin(s) from the author requested!`)
                     .setColor('#ff9900')]
             });
-            
-            client.pluginCount++;
+            client.pluginCount += added;
             return;
         } catch (e) {
             command.editReply({
                 embeds: [new MessageEmbed()
-                    .setTitle("<:severe:926091008645664848> This plugin does not exist.")
+                    .setTitle("<:severe:926091008645664848> This user does not exist.")
                     .setColor('#ff9900')]
             });
         }

@@ -26,7 +26,7 @@ async function check(plugins,client) {
             webhook = false;
         }
 
-        const {data} = await axios.get("https://api.spiget.org/v2/resources/" + plugin.id + "/updates/latest?size=1");
+        const {data} = await axios.get("https://api.spiget.org/v2/resources/" + encodeURIComponent(plugin.id) + "/updates/latest?size=1");
         if (plugin.latest != data.id) {
             plugin.latest = data.id;
             if (webhook) {
@@ -41,10 +41,10 @@ async function check(plugins,client) {
 }
 
 async function sendWebhook(client, plugin, response) {
-    client.logger.info("[・] Sending " + (plugin.webhook != null ? "webhook" : "message" ) + " for " + plugin.id);
+    client.logger.info("[・] Sending message for " + plugin.id);
 
-    const {data} = await axios.get("https://api.spiget.org/v2/resources/" + plugin.id);
-    const version = await axios.get("https://api.spiget.org/v2/resources/" + plugin.id + "/versions/latest");
+    const {data} = await axios.get("https://api.spiget.org/v2/resources/" + encodeURIComponent(plugin.id));
+    const version = await axios.get("https://api.spiget.org/v2/resources/" + encodeURIComponent(plugin.id) + "/versions/latest");
 
     const embed = new MessageEmbed()
 	.setTitle('📰・' + data.name + ' Update')
@@ -52,7 +52,7 @@ async function sendWebhook(client, plugin, response) {
     .setTimestamp()
     .setFooter({
         text: "Spigot • Updates",
-        iconURL: "https://i.imgur.com/FyUSy8J.png"
+        iconURL: client.user.avatarURL()
     })
 	.setColor('#ff9900');
 
