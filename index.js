@@ -78,6 +78,11 @@ bot.commands = [
 			.setName('checknow')
 			.setDescription('Forces the check of updates')
 			.toJSON(),
+		
+		new SlashCommandBuilder()
+			.setName('status')
+			.setDescription('Retrieves the stauts of the bot')
+			.toJSON(),
 	]
 
 bot.restAPI = new REST({ version: '9' }).setToken(bot.config.token);
