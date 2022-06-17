@@ -19,7 +19,7 @@
     "express": "^4.17.3",
     "express-rate-limit": "^6.3.0",
     "helmet": "^5.0.2",
-    "mongoose": "^6.3.5"
+    "mongoose": "^6.4.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
