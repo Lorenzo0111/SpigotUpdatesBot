@@ -1,6 +1,14 @@
-const axios = require('axios').default;
+const {create} = require('axios');
 const {MessageEmbed} = require('discord.js');
 const Plugin = require("../database/Plugin");
+
+const axios = create({
+    headers: {
+        common: {
+            'User-Agent': 'SpigotUpdatesBot',
+        }
+    }
+});
 
 module.exports = async (client) => {
     await checkNow(client);
