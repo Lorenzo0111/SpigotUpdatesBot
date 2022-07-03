@@ -1,6 +1,7 @@
 const BOOT = new Date().getTime(); 
 
 const { Client, Intents } = require('discord.js');
+const Statcord = require("statcord.js");
 const { REST } = require('@discordjs/rest');
 const { Routes, ChannelType } = require('discord-api-types/v9');
 const { SlashCommandBuilder } = require('@discordjs/builders');
@@ -47,8 +48,7 @@ bot.commands = [
 				option.setName('channel')
 					.setDescription('The channel id')
 					.setRequired(true)
-					.addChannelType(ChannelType.GuildText)
-					.addChannelType(ChannelType.GuildNews))
+					.addChannelTypes(ChannelType.GuildText, ChannelType.GuildNews))
 			.addRoleOption(option =>
 				option.setName("ping")
 				.setDescription("The role to ping when a new update is released")
@@ -66,8 +66,7 @@ bot.commands = [
 				option.setName('channel')
 					.setDescription('The channel id')
 					.setRequired(true)
-					.addChannelType(ChannelType.GuildText)
-					.addChannelType(ChannelType.GuildNews))
+					.addChannelTypes(ChannelType.GuildText, ChannelType.GuildNews))
 			.addRoleOption(option =>
 				option.setName("ping")
 				.setDescription("The role to ping when a new update is released")
@@ -88,6 +87,18 @@ bot.commands = [
 bot.restAPI = new REST({ version: '9' }).setToken(bot.config.token);
 
 bot.on('ready',() => {
+	if (bot.config.statcord !== "") {
+		const statcord = new Statcord.Client({
+			key: bot.config.statcord,
+			client: bot,
+			postCpuStatistics: false,
+			postMemStatistics: false,
+			postNetworkStatistics: false
+		});
+
+		statcord.autopost();
+	}
+
 	bot.logger.info(`Logged in as ${bot.user.tag}.`)
 	bot.logger.info(`You can invite the bot with the following link: https://discord.com/api/oauth2/authorize?client_id=${bot.user.id}&permissions=537151488&scope=bot%20applications.commands`)
 
