@@ -23,6 +23,6 @@
     "statcord.js": "^3.4.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.18"
+    "nodemon": "^2.0.19"
   }
 }
