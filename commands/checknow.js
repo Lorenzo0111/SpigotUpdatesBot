@@ -9,7 +9,9 @@ module.exports = {
             return;
         }
 
-        await command.deferReply();
+        await command.deferReply({
+            ephemeral: true
+        });
         
         if (!command.member.permissions.has(Permissions.FLAGS.MANAGE_WEBHOOKS)) {
             command.editReply("You do not have the permission to manage webhooks.");
