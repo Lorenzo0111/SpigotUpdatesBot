@@ -23,7 +23,7 @@ const bot = new Client({
 	]
 });
 
-bot.version = "2.0";
+bot.version = "2.1";
 bot.config = require('./config.json');
 bot.logger = new Logger(console.log);
 
