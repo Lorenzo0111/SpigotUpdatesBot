@@ -3,7 +3,9 @@
     "public": false,
     "api": {
         "enabled": false,
-        "port": 8080
+        "port": 8080,
+        "topgg": "",
+        "guild": ""
     },
 	"database": "mongodb://localhost:27017/sub",
     "statcord": "",

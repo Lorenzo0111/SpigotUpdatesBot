@@ -1,11 +1,13 @@
 const rateLimit = require('express-rate-limit')
+const express = require('express')
 
 module.exports = class WebServer {
     constructor(bot) {
         this.bot = bot;
-        const app = require('express')();
+        const app = express();
         app.use(require('helmet')());
-        app.use(require('cors')())
+        app.use(require('cors')());
+        app.use(express.json());
         const limiter = rateLimit({
             windowMs: 15 * 60 * 1000,
             max: 10,
@@ -41,6 +43,34 @@ module.exports = class WebServer {
                 plugins: bot.pluginCount || 0,
                 lastCheck: bot.lastCheck
             });
+        });
+
+        app.post('/topgg', async (req, res) => {
+            if (!req.headers.authorization || req.headers.authorization !== bot.config.api.topgg) {
+                res.status(401).json({
+                    error: 'Unauthorized'
+                });
+                return;
+            }
+
+            const { bot: botId, user } = req.body;
+            if (bot.user.id !== botId) {
+                res.status(400).json({
+                    error: 'Invalid bot ID'
+                });
+                return;
+            }
+
+            const guild = bot.guilds.cache.get(bot.config.api.guild);
+            if (!guild) {
+                res.status(500).json({
+                    error: 'Guild not found'
+                });
+                return;
+            }
+
+            const member = await guild.members.fetch(user);
+            
         });
         
         this.app = app;

@@ -55,6 +55,21 @@ bot.commands = [
 				.setRequired(false))
 			.toJSON(),
 
+	new SlashCommandBuilder()
+			.setName('remove')
+			.setDescription('Removes a plugin from the list to check')
+			.addIntegerOption(option => 
+				option.setName('plugin')
+					.setDescription('The plugin id')
+					.setRequired(true))
+			.toJSON(),
+
+	new SlashCommandBuilder()
+			.setName('list')
+			.setDescription('Retrieves the list that the bot checks')
+			.toJSON(),
+
+
 		new SlashCommandBuilder()
 			.setName('addowner')
 			.setDescription('Adds all the plugins of an user to the list to check')
@@ -116,7 +131,7 @@ bot.on('ready',() => {
 				bot.restAPI.put(
 					Routes.applicationGuildCommands(bot.user.id, guild.id),
 						{ body: bot.commands },
-					);
+					).catch((err) => bot.logger.error("Error while trying to load commands. Are you missing the Commands permission?"));
 				} catch (error) {
 					bot.logger.error("Error while trying to load commands. Are you missing the Commands permission?");
 				}

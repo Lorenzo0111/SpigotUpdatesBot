@@ -6,7 +6,7 @@ module.exports = {
     name: 'add',
     executor: async (client,command) => {
         if (!client.config.public) {
-            command.reply("This command is only available in private bots.");
+            command.reply("This command is only available in public bots.");
             return;
         }
         const plugin = command.options.getInteger('plugin') || 0;
