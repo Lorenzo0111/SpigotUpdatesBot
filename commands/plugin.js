@@ -2,7 +2,7 @@ const axios = require('axios').default;
 const {MessageEmbed} = require('discord.js');
 
 module.exports = {
-    name: 'version',
+    name: 'plugin',
     executor: async (client,command) => {
         const plugin = command.options.getString('plugin');
 
