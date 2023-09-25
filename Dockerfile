@@ -1,6 +1,8 @@
 FROM node:20-alpine
 WORKDIR /app
 
+LABEL org.opencontainers.image.source https://github.com/Lorenzo0111/SpigotUpdatesBot
+
 COPY package.json ./
 COPY yarn.lock ./
 
