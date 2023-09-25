@@ -1,6 +1,6 @@
 const BOOT = new Date().getTime(); 
 
-const { Client, Intents } = require('discord.js');
+const { Client, IntentsBitField } = require('discord.js');
 const Statcord = require("statcord.js");
 const { REST } = require('@discordjs/rest');
 const { Routes, ChannelType } = require('discord-api-types/v9');
@@ -19,7 +19,7 @@ const bot = new Client({
         }]
 	},
 	intents: [
-		Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS, Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS
+		IntentsBitField.Flags.Guilds, IntentsBitField.Flags.GuildMembers, IntentsBitField.Flags.GuildEmojisAndStickers
 	]
 });
 
@@ -153,6 +153,6 @@ bot.on('ready',() => {
 	bot.logger.info("[+] Ready in " + (new Date().getTime() - BOOT) / 1000 + " seconds!");
 });
 
-connect(bot.config.database, () => {
+connect(bot.config.database).then(() => {
 	bot.login(bot.config.token);
 });

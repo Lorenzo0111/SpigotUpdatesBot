@@ -1,5 +1,5 @@
 const axios = require('axios').default;
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 
 module.exports = {
     name: 'plugin',
@@ -31,7 +31,7 @@ module.exports = {
 
         const latestVersion = latest.data;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
         .setTitle(resourceObj.name)
         .setDescription(`${resourceObj.name} v${latestVersion.name}
         

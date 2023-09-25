@@ -1,5 +1,5 @@
 const {create} = require('axios');
-const {MessageEmbed} = require('discord.js');
+const {EmbedBuilder} = require('discord.js');
 const Plugin = require("../database/Plugin");
 
 const axios = create({
@@ -57,7 +57,7 @@ async function sendWebhook(client, plugin, response) {
         const {data} = await axios.get("https://api.spiget.org/v2/resources/" + encodeURIComponent(plugin.id));
         const version = await axios.get("https://api.spiget.org/v2/resources/" + encodeURIComponent(plugin.id) + "/versions/latest");
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
         .setTitle('📰・' + data.name + ' Update')
         .setDescription(client.config.message.replace("{version}", version.data.name).replace("{title}",response.title).replace("{plugin}",plugin.id).replace("\\n","\n"))
         .setTimestamp()

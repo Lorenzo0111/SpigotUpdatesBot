@@ -1,4 +1,4 @@
-const {Permissions,MessageEmbed} = require('discord.js');
+const {EmbedBuilder, PermissionFlagsBits} = require('discord.js');
 const {checkGuild} = require('../modules/checker');
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
             ephemeral: true
         });
         
-        if (!command.member.permissions.has(Permissions.FLAGS.MANAGE_WEBHOOKS)) {
+        if (!command.member.permissions.has(PermissionFlagsBits.ManageWebhooks)) {
             command.editReply("You do not have the permission to manage webhooks.");
             return;
         }
@@ -21,7 +21,7 @@ module.exports = {
         checkGuild(command.guild,client);
 
         command.editReply({
-            embeds: [new MessageEmbed()
+            embeds: [new EmbedBuilder()
                 .setTitle("<a:tick:983296047965151273>  Check scheduled successfully!")
                 .setColor('#ff9900')]
         });

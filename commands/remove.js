@@ -1,4 +1,4 @@
-const {Permissions, MessageEmbed} = require('discord.js');
+const {PermissionFlagsBits, EmbedBuilder} = require('discord.js');
 const Plugin = require('../database/Plugin');
 
 module.exports = {
@@ -13,9 +13,9 @@ module.exports = {
 
         await command.deferReply();
 
-        if (!command.member.permissions.has(Permissions.FLAGS.MANAGE_WEBHOOKS)) {
+        if (!command.member.permissions.has(PermissionFlagsBits.ManageWebhooks)) {
             command.editReply({
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setTitle("<:severe:926091008645664848> You do not have the permission to manage webhooks.")
                     .setColor('#ff9900')]
             });
@@ -24,7 +24,7 @@ module.exports = {
 
         if (plugin === 0) {
             command.editReply({
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setTitle("<:severe:926091008645664848> You must specify a plugin id.")
                     .setColor('#ff9900')]
             });
@@ -37,7 +37,7 @@ module.exports = {
         }).exec();
 
         command.editReply({
-            embeds: [new MessageEmbed()
+            embeds: [new EmbedBuilder()
                 .setTitle("<a:tick:983296047965151273> Plugin removed successfully!")
                 .setColor('#ff9900')]
         });

@@ -1,5 +1,5 @@
 const axios = require('axios').default;
-const {Permissions, MessageEmbed} = require('discord.js');
+const {PermissionFlagsBits, EmbedBuilder} = require('discord.js');
 const Plugin = require('../database/Plugin');
 
 module.exports = {
@@ -15,9 +15,9 @@ module.exports = {
 
         await command.deferReply();
 
-        if (!command.member.permissions.has(Permissions.FLAGS.MANAGE_WEBHOOKS)) {
+        if (!command.member.permissions.has(PermissionFlagsBits.ManageWebhooks)) {
             command.editReply({
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setTitle("<:severe:926091008645664848> You do not have the permission to manage webhooks.")
                     .setColor('#ff9900')]
             });
@@ -26,7 +26,7 @@ module.exports = {
 
         if (user === 0) {
             command.editReply({
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setTitle("<:severe:926091008645664848> You must specify a user id.")
                     .setColor('#ff9900')]
             });
@@ -35,7 +35,7 @@ module.exports = {
 
         if (!channel) {
             command.editReply({
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setTitle("<:severe:926091008645664848> You must specify a channel.")
                     .setColor('#ff9900')]
             });
@@ -72,7 +72,7 @@ module.exports = {
             }
             
             command.editReply({
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setTitle(`<a:tick:983296047965151273> Successfully added ${added} plugin(s) from the author requested!`)
                     .setColor('#ff9900')]
             });
@@ -80,7 +80,7 @@ module.exports = {
             return;
         } catch (e) {
             command.editReply({
-                embeds: [new MessageEmbed()
+                embeds: [new EmbedBuilder()
                     .setTitle("<:severe:926091008645664848> This user does not exist.")
                     .setColor('#ff9900')]
             });

@@ -1,5 +1,5 @@
 const axios = require('axios').default;
-const { MessageEmbed } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 
 module.exports = {
     name: 'status',
@@ -8,7 +8,7 @@ module.exports = {
 
 		const {data} = await axios.get('https://api.spiget.org/v2/status');
 
-		const embed = new MessageEmbed()
+		const embed = new EmbedBuilder()
 			.setTitle('Spigot Updates • Status')
 			.setDescription('Status of the bot')
 			.setColor('#ff9900')
