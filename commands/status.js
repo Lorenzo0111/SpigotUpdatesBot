@@ -12,8 +12,17 @@ module.exports = {
 			.setTitle('Spigot Updates • Status')
 			.setDescription('Status of the bot')
 			.setColor('#ff9900')
-			.addField('🏓 • Spiget Server', data.status.server.name, true)
-			.addField('📑 • Discord Ping', Math.round(client.ws.ping) + 'ms');
+			.setFields([
+				{
+					name: '🏓 • Spiget Server',
+					value: data.status.server.name,
+					inline: true
+				},
+				{
+					name: '📑 • Discord Ping',
+					value: Math.round(client.ws.ping) + 'ms'
+				}
+			]);
 
 		command.editReply({embeds: [embed]});
     }
