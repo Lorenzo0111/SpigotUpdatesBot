@@ -75,6 +75,8 @@ async function sendWebhook(client, plugin, response) {
                 channel.send({
                     content: plugin.ping != null ? "<@&" + plugin.ping + ">" : null,
                     embeds: [embed]
+                }).catch(e => {
+                    client.logger.error(`Cannot send message for ${data.name}. Aborting..`);
                 });
             } else {
                 client.logger.error("Cannot find a channel with that id. Aborting..");
