@@ -1,5 +1,5 @@
 # SpigotUpdatesBot
-[![Discord](https://img.shields.io/discord/737993529795674182?label=Discord)](https://discord.gg/ZXM2Az8)
+[![Discord](https://img.shields.io/discord/1088775598337433662?label=Discord)](https://discord.gg/HT47UQXBqG)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/Lorenzo0111/SpigotUpdatesBot?label=Version)](https://github.com/Lorenzo0111/SpigotUpdatesBot/releases)
 [![Spigot Thread](https://img.shields.io/badge/Spigot%20Thread-here-orange)](https://www.spigotmc.org/threads/544113/)
 [![Spigot Thread](https://img.shields.io/badge/Add%20to%20your%20server-here-blue)](https://discord.com/oauth2/authorize?client_id=860429931146248192&permissions=117760&scope=bot%20applications.commands)
