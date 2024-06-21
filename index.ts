@@ -1,22 +1,23 @@
 const BOOT = new Date().getTime();
 
-const { Client, IntentsBitField } = require("discord.js");
-const Statcord = require("statcord.js");
-const { REST } = require("@discordjs/rest");
-const { Routes, ChannelType } = require("discord-api-types/v9");
-const { SlashCommandBuilder } = require("@discordjs/builders");
-const Logger = require("./utils/Logger");
-const Webserver = require("./utils/Webserver");
-const fs = require("fs");
-const { connect } = require("mongoose");
-const Plugin = require("./database/Plugin");
-const bot = new Client({
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { REST } from "@discordjs/rest";
+import { ChannelType, Routes } from "discord-api-types/v10";
+import { ActivityType, Client, IntentsBitField } from "discord.js";
+import { readFileSync, readdirSync } from "fs";
+import { connect } from "mongoose";
+import Plugin from "./database/Plugin";
+import type { Config, ExtendedClient } from "./types";
+import Logger from "./utils/Logger";
+import Webserver from "./utils/Webserver";
+
+const bot: ExtendedClient = new Client({
   presence: {
     status: "online",
     activities: [
       {
         name: `SpigotMC`,
-        type: "WATCHING",
+        type: ActivityType.Watching,
       },
     ],
   },
@@ -25,10 +26,10 @@ const bot = new Client({
     IntentsBitField.Flags.GuildMembers,
     IntentsBitField.Flags.GuildEmojisAndStickers,
   ],
-});
+}) as ExtendedClient;
 
-bot.version = "1.2.4";
-bot.config = require("./config.json");
+bot.version = "1.3";
+bot.config = JSON.parse(readFileSync("config.json", "utf-8")) as Config;
 bot.logger = new Logger(console.log);
 
 bot.commands = [
@@ -112,36 +113,26 @@ bot.commands = [
 bot.restAPI = new REST({ version: "9" }).setToken(bot.config.token);
 
 bot.on("ready", () => {
-  if (bot.config.statcord !== "") {
-    const statcord = new Statcord.Client({
-      key: bot.config.statcord,
-      client: bot,
-      postCpuStatistics: false,
-      postMemStatistics: false,
-      postNetworkStatistics: false,
-    });
-
-    statcord.autopost();
-  }
-
-  bot.logger.info(`Logged in as ${bot.user.tag}.`);
+  bot.logger.info(`Logged in as ${bot.user?.tag}.`);
   bot.logger.info(
-    `You can invite the bot with the following link: https://discord.com/api/oauth2/authorize?client_id=${bot.user.id}&permissions=537151488&scope=bot%20applications.commands`
+    `You can invite the bot with the following link: https://discord.com/api/oauth2/authorize?client_id=${
+      bot.user!.id
+    }&permissions=537151488&scope=bot%20applications.commands`
   );
 
-  fs.readdirSync("modules")
+  readdirSync("modules")
     .map((mod) => {
       bot.logger.info("[+] Loaded " + mod);
       return `./modules/${mod}`;
     })
     .map((mod) => require(mod))
-    .forEach((mod) => mod(bot));
+    .forEach((mod) => mod.default(bot));
 
   (async () => {
     bot.guilds.cache.forEach((guild) => {
       try {
         bot.restAPI
-          .put(Routes.applicationGuildCommands(bot.user.id, guild.id), {
+          .put(Routes.applicationGuildCommands(bot.user!.id, guild.id), {
             body: bot.commands,
           })
           .catch((err) =>

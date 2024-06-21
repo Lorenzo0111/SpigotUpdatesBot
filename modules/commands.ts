@@ -1,14 +1,17 @@
-const fs = require("fs");
+import { Events } from "discord.js";
+import { readdirSync } from "fs";
+import type { ExtendedClient } from "../types";
+
 const commands = new Map();
 
-fs.readdirSync("commands")
+readdirSync("commands")
   .map((mod) => `../commands/${mod}`)
   .map((mod) => require(mod))
   .forEach((mod) => commands.set(mod.name, mod));
 
-module.exports = async (client) => {
-  client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand()) return;
+export default async (client: ExtendedClient) => {
+  client.on(Events.InteractionCreate, async (interaction) => {
+    if (!interaction.isChatInputCommand()) return;
 
     const command = interaction.commandName;
 

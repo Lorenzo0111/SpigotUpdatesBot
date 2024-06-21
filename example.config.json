@@ -8,6 +8,5 @@
         "guild": ""
     },
 	"database": "mongodb://localhost:27017/sub",
-    "statcord": "",
     "message": "**📋・About**\n> Version: {version}\n> Title: {title}\n\n**📦・Download**\n> https://www.spigotmc.org/resources/{plugin}"
 }

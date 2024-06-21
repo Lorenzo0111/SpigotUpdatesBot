@@ -1,31 +1,28 @@
-const { create } = require("axios");
-const { EmbedBuilder } = require("discord.js");
-const Plugin = require("../database/Plugin");
+import { EmbedBuilder, Guild, TextChannel } from "discord.js";
+import Plugin from "../database/Plugin";
+import type {
+  ExtendedClient,
+  LatestUpdateResponse,
+  PluginModel,
+} from "../types";
+import axios from "../utils/fetcher";
 
-const axios = create({
-  headers: {
-    common: {
-      "User-Agent": "SpigotUpdatesBot",
-    },
-  },
-});
-
-module.exports = async (client) => {
+export default async (client: ExtendedClient) => {
   await checkNow(client);
   setInterval(() => checkNow(client), 30 * 60 * 1000);
 };
 
-module.exports.checkGuild = async function (guild, client) {
+export async function checkGuild(guild: Guild, client: ExtendedClient) {
   const plugins = await Plugin.find({ server: guild.id }).exec();
   check(plugins, client);
-};
+}
 
-async function checkNow(client) {
+async function checkNow(client: ExtendedClient) {
   const plugins = await Plugin.find().exec();
   check(plugins, client);
 }
 
-async function check(plugins, client) {
+async function check(plugins: PluginModel[], client: ExtendedClient) {
   for (let index in plugins) {
     let webhook = true;
     let plugin = plugins[index];
@@ -54,7 +51,11 @@ async function check(plugins, client) {
   client.lastCheck = new Date().getTime();
 }
 
-async function sendWebhook(client, plugin, response) {
+async function sendWebhook(
+  client: ExtendedClient,
+  plugin: PluginModel,
+  response: LatestUpdateResponse
+) {
   try {
     client.logger.info("[・] Sending message for " + plugin.id);
 
@@ -79,18 +80,19 @@ async function sendWebhook(client, plugin, response) {
       .setTimestamp()
       .setFooter({
         text: "Spigot • Updates",
-        iconURL: client.user.avatarURL(),
+        iconURL: client.user?.avatarURL() || undefined,
       })
       .setColor("#ff9900");
 
     const guild = client.guilds.cache.get(plugin.server);
     if (guild != null) {
-      const channel = guild.channels.cache.get(plugin.channel);
+      const channel = guild.channels.cache.get(plugin.channel) as TextChannel;
 
       if (channel != null) {
         channel
           .send({
-            content: plugin.ping != null ? "<@&" + plugin.ping + ">" : null,
+            content:
+              plugin.ping != null ? "<@&" + plugin.ping + ">" : undefined,
             embeds: [embed],
           })
           .catch((e) => {
@@ -103,6 +105,7 @@ async function sendWebhook(client, plugin, response) {
       }
     } else {
       client.logger.error("Cannot find a server with that id. Aborting..");
+      await plugin.deleteOne().exec();
     }
   } catch (e) {}
 }

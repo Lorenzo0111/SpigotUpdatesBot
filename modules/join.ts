@@ -1,10 +1,11 @@
-const { Routes } = require("discord-api-types/v9");
+import { Routes } from "discord-api-types/v9";
+import type { ExtendedClient } from "../types";
 
-module.exports = async (client) => {
+export default async (client: ExtendedClient) => {
   client.on("guildCreate", async (guild) => {
     try {
       client.restAPI.put(
-        Routes.applicationGuildCommands(client.user.id, guild.id),
+        Routes.applicationGuildCommands(client.user!.id, guild.id),
         { body: client.commands }
       );
     } catch (error) {

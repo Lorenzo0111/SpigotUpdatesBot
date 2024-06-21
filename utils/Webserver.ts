@@ -1,27 +1,18 @@
-const rateLimit = require("express-rate-limit");
-const express = require("express");
+import express, { json } from "express";
+import helmet from "helmet";
+import cors from "cors";
+import type { ExtendedClient } from "../types";
 
-module.exports = class WebServer {
-  constructor(bot) {
+export default class WebServer {
+  bot: ExtendedClient;
+  app: express.Application;
+
+  constructor(bot: ExtendedClient) {
     this.bot = bot;
     const app = express();
-    app.use(require("helmet")());
-    app.use(require("cors")());
-    app.use(express.json());
-    const limiter = rateLimit({
-      windowMs: 15 * 60 * 1000,
-      max: 10,
-      standardHeaders: true,
-      legacyHeaders: false,
-      handler: (req, res, next, options) => {
-        res.status(429).json({
-          error: "Too Many Requests",
-          requests: options.store.hits[req.ip],
-          resetTime: options.windowMs,
-        });
-      },
-    });
-    app.use(limiter);
+    app.use(helmet());
+    app.use(cors());
+    app.use(json());
 
     app.get("/", (req, res) => {
       res.json({
@@ -57,7 +48,7 @@ module.exports = class WebServer {
       }
 
       const { bot: botId, user } = req.body;
-      if (bot.user.id !== botId) {
+      if (bot.user?.id !== botId) {
         res.status(400).json({
           error: "Invalid bot ID",
         });
@@ -81,4 +72,4 @@ module.exports = class WebServer {
   start() {
     this.app.listen(this.bot.config.api.port);
   }
-};
+}
