@@ -1,10 +1,7 @@
+import type { Plugin } from "@prisma/client";
 import { EmbedBuilder, Guild, TextChannel } from "discord.js";
-import Plugin from "../database/Plugin";
-import type {
-  ExtendedClient,
-  LatestUpdateResponse,
-  PluginModel,
-} from "../types";
+import prisma from "../lib/prisma";
+import type { ExtendedClient, LatestUpdateResponse } from "../types";
 import axios from "../utils/fetcher";
 
 export default async (client: ExtendedClient) => {
@@ -13,16 +10,18 @@ export default async (client: ExtendedClient) => {
 };
 
 export async function checkGuild(guild: Guild, client: ExtendedClient) {
-  const plugins = await Plugin.find({ server: guild.id }).exec();
+  const plugins = await prisma.plugin.findMany({
+    where: { server: guild.id },
+  });
   check(plugins, client);
 }
 
 async function checkNow(client: ExtendedClient) {
-  const plugins = await Plugin.find().exec();
+  const plugins = await prisma.plugin.findMany();
   check(plugins, client);
 }
 
-async function check(plugins: PluginModel[], client: ExtendedClient) {
+async function check(plugins: Plugin[], client: ExtendedClient) {
   for (let index in plugins) {
     let webhook = true;
     let plugin = plugins[index];
@@ -34,7 +33,7 @@ async function check(plugins: PluginModel[], client: ExtendedClient) {
     try {
       const { data } = await axios.get(
         "https://api.spiget.org/v2/resources/" +
-          encodeURIComponent(plugin.id) +
+          encodeURIComponent(plugin.pluginId) +
           "/updates/latest?size=1"
       );
       if (plugin.latest != data.id) {
@@ -43,7 +42,10 @@ async function check(plugins: PluginModel[], client: ExtendedClient) {
           sendWebhook(client, plugin, data);
         }
 
-        plugin.save();
+        await prisma.plugin.update({
+          where: { id: plugin.id },
+          data: { latest: data.id },
+        });
       }
     } catch (e) {}
   }
@@ -53,18 +55,18 @@ async function check(plugins: PluginModel[], client: ExtendedClient) {
 
 async function sendWebhook(
   client: ExtendedClient,
-  plugin: PluginModel,
+  plugin: Plugin,
   response: LatestUpdateResponse
 ) {
   try {
-    client.logger.info("[・] Sending message for " + plugin.id);
+    client.logger.info("[・] Sending message for " + plugin.pluginId);
 
     const { data } = await axios.get(
-      "https://api.spiget.org/v2/resources/" + encodeURIComponent(plugin.id)
+      "https://api.spiget.org/v2/resources/" + encodeURIComponent(plugin.pluginId)
     );
     const version = await axios.get(
       "https://api.spiget.org/v2/resources/" +
-        encodeURIComponent(plugin.id) +
+        encodeURIComponent(plugin.pluginId) +
         "/versions/latest"
     );
 
@@ -74,7 +76,7 @@ async function sendWebhook(
         client.config.message
           .replace("{version}", version.data.name)
           .replace("{title}", response.title)
-          .replace("{plugin}", plugin.id)
+          .replace("{plugin}", plugin.pluginId)
           .replace("\\n", "\n")
       )
       .setTimestamp()
@@ -105,7 +107,11 @@ async function sendWebhook(
       }
     } else {
       client.logger.error("Cannot find a server with that id. Aborting..");
-      await plugin.deleteOne().exec();
+      await prisma.plugin.delete({
+        where: {
+          id: plugin.id,
+        },
+      });
     }
   } catch (e) {}
 }

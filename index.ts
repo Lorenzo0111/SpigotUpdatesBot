@@ -5,11 +5,10 @@ import { REST } from "@discordjs/rest";
 import { ChannelType, Routes } from "discord-api-types/v10";
 import { ActivityType, Client, IntentsBitField } from "discord.js";
 import { readFileSync, readdirSync } from "fs";
-import { connect } from "mongoose";
-import Plugin from "./database/Plugin";
 import type { Config, ExtendedClient } from "./types";
 import Logger from "./utils/Logger";
 import Webserver from "./utils/Webserver";
+import prisma from "./lib/prisma";
 
 const bot: ExtendedClient = new Client({
   presence: {
@@ -153,11 +152,9 @@ bot.on("ready", () => {
   if (bot.config.api.enabled) {
     bot.logger.info("[+] Starting API server");
     bot.pluginCount = 0;
-    Plugin.countDocuments()
-      .exec()
-      .then((count) => {
-        bot.pluginCount = count;
-      });
+    prisma.plugin.count().then((count) => {
+      bot.pluginCount = count;
+    });
     new Webserver(bot).start();
   }
 
@@ -167,6 +164,6 @@ bot.on("ready", () => {
   );
 });
 
-connect(bot.config.database).then(() => {
+prisma.$connect().then(() => {
   bot.login(bot.config.token);
 });

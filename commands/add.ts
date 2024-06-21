@@ -5,9 +5,9 @@ import {
   PermissionFlagsBits,
   TextChannel,
 } from "discord.js";
-import Plugin from "../database/Plugin";
 import type { ExtendedClient } from "../types";
 import axios from "../utils/fetcher";
+import prisma from "../lib/prisma";
 
 export const name = "add";
 export async function executor(
@@ -68,13 +68,16 @@ export async function executor(
         encodeURIComponent(plugin) +
         "/updates/latest?size=1"
     );
-    new Plugin({
-      id: plugin,
-      server: channel.guildId,
-      channel: channel.id,
-      latest: data.id,
-      ping: ping != null ? ping.id : null,
-    }).save();
+
+    await prisma.plugin.create({
+      data: {
+        pluginId: plugin.toString(),
+        server: channel.guildId,
+        channel: channel.id,
+        latest: data.id,
+        ping: ping != null ? ping.id : null,
+      },
+    });
 
     command.editReply({
       embeds: [

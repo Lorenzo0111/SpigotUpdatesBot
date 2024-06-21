@@ -6,8 +6,8 @@ import {
   PermissionFlagsBits,
   TextChannel,
 } from "discord.js";
-import Plugin from "../database/Plugin";
 import type { ExtendedClient } from "../types";
+import prisma from "../lib/prisma";
 
 export const name = "addowner";
 export async function executor(
@@ -71,11 +71,13 @@ export async function executor(
 
     for (let index in data) {
       const plugin = data[index];
-      const element = await Plugin.findOne({
-        server: command.guildId,
-        id: plugin.id,
-        channel: channel.id,
-      }).exec();
+      const element = await prisma.plugin.findFirst({
+        where: {
+          server: command.guildId!.toString(),
+          pluginId: plugin.id,
+          channel: channel.id,
+        },
+      });
 
       if (!element) {
         let updateId = null;
@@ -90,13 +92,15 @@ export async function executor(
           updateId = updateData.id;
         } catch (ignored) {}
 
-        new Plugin({
-          id: plugin.id,
-          server: channel.guild.id,
-          channel: channel.id,
-          latest: updateId,
-          ping: ping != null ? ping.id : null,
-        }).save();
+        await prisma.plugin.create({
+          data: {
+            pluginId: plugin.id,
+            server: channel.guild.id,
+            channel: channel.id,
+            latest: updateId,
+            ping: ping != null ? ping.id : null,
+          },
+        });
 
         added++;
       }

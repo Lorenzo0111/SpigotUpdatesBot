@@ -3,9 +3,10 @@ import {
   EmbedBuilder,
   ChatInputCommandInteraction,
   GuildMember,
+  APIEmbedField,
 } from "discord.js";
-import Plugin from "../database/Plugin";
 import type { ExtendedClient } from "../types";
+import prisma from "../lib/prisma";
 
 export const name = "list";
 export async function executor(
@@ -34,17 +35,19 @@ export async function executor(
     return;
   }
 
-  const plugins = await Plugin.find({
-    server: command.guildId,
-  }).exec();
+  const plugins = await prisma.plugin.findMany({
+    where: {
+      server: command.guildId!,
+    },
+  });
 
-  const fields = [];
+  const fields: APIEmbedField[] = [];
   for (let i = 0; i < plugins.length; i++) {
     fields.push({
-      name: plugins[i].id,
+      name: plugins[i].pluginId,
       value:
         "[Plugin Link](https://www.spigotmc.org/resources/" +
-        plugins[i].id +
+        plugins[i].pluginId +
         "/) - <#" +
         plugins[i].channel +
         "> - " +

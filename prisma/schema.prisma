@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Plugin {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  pluginId String  @map("id")
+  channel  String
+  server   String
+  latest   Int?
+  ping     String?
+
+  @@map("plugins")
+}

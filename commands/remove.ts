@@ -4,8 +4,8 @@ import {
   GuildMember,
   PermissionFlagsBits,
 } from "discord.js";
-import Plugin from "../database/Plugin";
 import type { ExtendedClient } from "../types";
+import prisma from "../lib/prisma";
 
 export const name = "remove";
 export async function executor(
@@ -47,10 +47,12 @@ export async function executor(
     return;
   }
 
-  await Plugin.deleteMany({
-    id: plugin,
-    server: command.guildId,
-  }).exec();
+  await prisma.plugin.deleteMany({
+    where: {
+      pluginId: plugin.toString(),
+      server: command.guildId!,
+    },
+  });
 
   command.editReply({
     embeds: [

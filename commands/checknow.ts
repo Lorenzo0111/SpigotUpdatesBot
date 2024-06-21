@@ -30,7 +30,7 @@ export async function executor(
     return;
   }
 
-  checkGuild(command.guild, client);
+  checkGuild(command.guild!, client);
 
   command.editReply({
     embeds: [
