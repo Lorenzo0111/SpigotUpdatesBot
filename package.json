@@ -15,7 +15,7 @@
   "dependencies": {
     "@discordjs/builders": "^1.8.2",
     "@discordjs/rest": "^2.3.0",
-    "@prisma/client": "5.15.1",
+    "@prisma/client": "6.5.0",
     "axios": "^1.7.2",
     "chalk": "5.3.0",
     "cors": "^2.8.5",
@@ -27,7 +27,7 @@
     "@types/bun": "latest",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
-    "prisma": "^5.15.1",
+    "prisma": "^6.0.0",
     "typescript": "^5.5.2"
   }
 }
