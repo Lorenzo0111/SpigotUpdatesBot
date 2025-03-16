@@ -1,9 +1,9 @@
 # use the official Bun image
 # see all versions at https://hub.docker.com/r/oven/bun/tags
-FROM oven/bun:1 as base
+FROM oven/bun:1 AS base
 WORKDIR /usr/src/app
 
-LABEL org.opencontainers.image.source https://github.com/Lorenzo0111/SpigotUpdatesBot
+LABEL org.opencontainers.image.source=https://github.com/Lorenzo0111/SpigotUpdatesBot
 
 # install dependencies into temp directory
 # this will cache them and speed up future builds
