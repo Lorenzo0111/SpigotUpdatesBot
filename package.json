@@ -10,7 +10,7 @@
     "dev": "bun run --watch index.ts",
     "build": "bun build index.ts --outdir=dist --target=bun",
     "db:push": "prisma db push",
-    "postinstall": "prisma generate"
+    "postinstall": "bun prisma generate"
   },
   "dependencies": {
     "@discordjs/builders": "^1.10.1",
