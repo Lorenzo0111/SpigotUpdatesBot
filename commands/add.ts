@@ -69,12 +69,21 @@ export async function executor(
         "/updates/latest?size=1"
     );
 
-    await prisma.plugin.create({
+    await prisma.pluginPing.create({
       data: {
-        pluginId: plugin.toString(),
+        info: {
+          connectOrCreate: {
+            where: {
+              pluginId: plugin.toString(),
+            },
+            create: {
+              pluginId: plugin.toString(),
+              latest: data.id,
+            },
+          },
+        },
         server: channel.guildId,
         channel: channel.id,
-        latest: data.id,
         ping: ping != null ? ping.id : null,
       },
     });

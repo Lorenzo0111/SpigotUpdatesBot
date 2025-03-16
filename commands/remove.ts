@@ -47,7 +47,7 @@ export async function executor(
     return;
   }
 
-  await prisma.plugin.deleteMany({
+  await prisma.pluginPing.deleteMany({
     where: {
       pluginId: plugin.toString(),
       server: command.guildId!,

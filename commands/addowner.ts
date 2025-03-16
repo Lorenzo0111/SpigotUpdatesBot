@@ -71,7 +71,7 @@ export async function executor(
 
     for (let index in data) {
       const plugin = data[index];
-      const element = await prisma.plugin.findFirst({
+      const element = await prisma.pluginPing.findFirst({
         where: {
           server: command.guildId!.toString(),
           pluginId: plugin.id,
@@ -92,12 +92,21 @@ export async function executor(
           updateId = updateData.id;
         } catch (ignored) {}
 
-        await prisma.plugin.create({
+        await prisma.pluginPing.create({
           data: {
-            pluginId: plugin.id,
+            info: {
+              connectOrCreate: {
+                where: {
+                  pluginId: plugin.id,
+                },
+                create: {
+                  pluginId: plugin.id,
+                  latest: updateId,
+                },
+              },
+            },
             server: channel.guild.id,
             channel: channel.id,
-            latest: updateId,
             ping: ping != null ? ping.id : null,
           },
         });

@@ -7,13 +7,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Plugin {
+model PluginInfo {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  pluginId String @unique @map("id")
+  latest   Int?
+
+  pings PluginPing[]
+
+  @@map("plugins_info")
+}
+
+model PluginPing {
   id       String  @id @default(auto()) @map("_id") @db.ObjectId
   pluginId String  @map("id")
   channel  String
   server   String
   latest   Int?
   ping     String?
+
+  info PluginInfo? @relation(fields: [pluginId], references: [pluginId], onDelete: Cascade)
 
   @@map("plugins")
 }

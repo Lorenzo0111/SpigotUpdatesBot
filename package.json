@@ -1,6 +1,6 @@
 {
   "name": "spigotupdatesbot",
-  "version": "1.3",
+  "version": "2.0.0",
   "main": "index.ts",
   "repository": "https://github.com/Lorenzo0111/SpigotUpdatesBot.git",
   "author": "Lorenzo0111",
@@ -10,6 +10,7 @@
     "dev": "bun run --watch index.ts",
     "build": "bun build index.ts --outdir=dist --target=bun",
     "db:push": "prisma db push",
+    "db:migrate": "bun run migrator.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {
@@ -18,15 +19,11 @@
     "@prisma/client": "6.5.0",
     "axios": "^1.8.3",
     "chalk": "5.4.1",
-    "cors": "^2.8.5",
     "discord.js": "^14.18.0",
-    "express": "^4.21.2",
-    "helmet": "^8.0.0"
+    "hono": "^4.7.4"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
     "prisma": "^6.5.0",
     "typescript": "^5.8.2"
   }

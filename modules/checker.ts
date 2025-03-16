@@ -1,8 +1,12 @@
-import type { Plugin } from "@prisma/client";
+import type { PluginInfo, PluginPing } from "@prisma/client";
 import { EmbedBuilder, Guild, TextChannel } from "discord.js";
 import prisma from "../lib/prisma";
 import type { ExtendedClient, LatestUpdateResponse } from "../types";
 import axios from "../utils/fetcher";
+
+export type Plugin = PluginInfo & {
+  pings: PluginPing[];
+};
 
 export default async (client: ExtendedClient) => {
   await checkNow(client);
@@ -10,14 +14,19 @@ export default async (client: ExtendedClient) => {
 };
 
 export async function checkGuild(guild: Guild, client: ExtendedClient) {
-  const plugins = await prisma.plugin.findMany({
-    where: { server: guild.id },
+  const plugins = await prisma.pluginInfo.findMany({
+    where: { pings: { some: { server: guild.id } } },
+    include: { pings: true },
   });
   check(plugins, client);
 }
 
 async function checkNow(client: ExtendedClient) {
-  const plugins = await prisma.plugin.findMany();
+  const plugins = await prisma.pluginInfo.findMany({
+    include: {
+      pings: true,
+    },
+  });
   check(plugins, client);
 }
 
@@ -26,9 +35,7 @@ async function check(plugins: Plugin[], client: ExtendedClient) {
     let webhook = true;
     let plugin = plugins[index];
 
-    if (plugin.latest == null) {
-      webhook = false;
-    }
+    if (plugin.latest == null) webhook = false;
 
     try {
       const { data } = await axios.get(
@@ -38,11 +45,10 @@ async function check(plugins: Plugin[], client: ExtendedClient) {
       );
       if (plugin.latest != data.id) {
         plugin.latest = data.id;
-        if (webhook) {
-          sendWebhook(client, plugin, data);
-        }
 
-        await prisma.plugin.update({
+        if (webhook) sendWebhook(client, plugin, data);
+
+        await prisma.pluginInfo.update({
           where: { id: plugin.id },
           data: { latest: data.id },
         });
@@ -62,7 +68,8 @@ async function sendWebhook(
     client.logger.info("[・] Sending message for " + plugin.pluginId);
 
     const { data } = await axios.get(
-      "https://api.spiget.org/v2/resources/" + encodeURIComponent(plugin.pluginId)
+      "https://api.spiget.org/v2/resources/" +
+        encodeURIComponent(plugin.pluginId)
     );
     const version = await axios.get(
       "https://api.spiget.org/v2/resources/" +
@@ -86,32 +93,33 @@ async function sendWebhook(
       })
       .setColor("#ff9900");
 
-    const guild = client.guilds.cache.get(plugin.server);
-    if (guild != null) {
-      const channel = guild.channels.cache.get(plugin.channel) as TextChannel;
+    for (const ping of plugin.pings) {
+      const guild = client.guilds.cache.get(ping.server);
+      if (guild != null) {
+        const channel = guild.channels.cache.get(ping.channel) as TextChannel;
 
-      if (channel != null) {
-        channel
-          .send({
-            content:
-              plugin.ping != null ? "<@&" + plugin.ping + ">" : undefined,
-            embeds: [embed],
-          })
-          .catch((e) => {
-            client.logger.error(
-              `Cannot send message for ${data.name}. Aborting..`
-            );
-          });
+        if (channel != null) {
+          channel
+            .send({
+              content: ping.ping != null ? "<@&" + ping.ping + ">" : undefined,
+              embeds: [embed],
+            })
+            .catch((e) => {
+              client.logger.error(
+                `Cannot send message for ${data.name}. Aborting..`
+              );
+            });
+        } else {
+          client.logger.error("Cannot find a channel with that id. Aborting..");
+        }
       } else {
-        client.logger.error("Cannot find a channel with that id. Aborting..");
+        client.logger.error("Cannot find a server with that id. Aborting..");
+        await prisma.pluginPing.delete({
+          where: {
+            id: ping.id,
+          },
+        });
       }
-    } else {
-      client.logger.error("Cannot find a server with that id. Aborting..");
-      await prisma.plugin.delete({
-        where: {
-          id: plugin.id,
-        },
-      });
     }
   } catch (e) {}
 }

@@ -1,5 +1,5 @@
 import type { Client, REST } from "discord.js";
-import type Logger from "./utils/Logger";
+import type Logger from "./utils/logger";
 
 export type Config = {
   token: string;

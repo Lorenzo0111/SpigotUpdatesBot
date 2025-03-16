@@ -5,10 +5,10 @@ import { REST } from "@discordjs/rest";
 import { ChannelType, Routes } from "discord-api-types/v10";
 import { ActivityType, Client, IntentsBitField } from "discord.js";
 import { readFileSync, readdirSync } from "fs";
-import type { Config, ExtendedClient } from "./types";
-import Logger from "./utils/Logger";
-import Webserver from "./utils/Webserver";
 import prisma from "./lib/prisma";
+import type { Config, ExtendedClient } from "./types";
+import Logger from "./utils/logger";
+import WebServer from "./utils/webserver";
 
 const bot: ExtendedClient = new Client({
   presence: {
@@ -23,11 +23,11 @@ const bot: ExtendedClient = new Client({
   intents: [
     IntentsBitField.Flags.Guilds,
     IntentsBitField.Flags.GuildMembers,
-    IntentsBitField.Flags.GuildEmojisAndStickers,
+    IntentsBitField.Flags.GuildExpressions,
   ],
 }) as ExtendedClient;
 
-bot.version = "1.3";
+bot.version = "2.0.0";
 bot.config = JSON.parse(readFileSync("config.json", "utf-8")) as Config;
 bot.logger = new Logger(console.log);
 
@@ -134,7 +134,7 @@ bot.on("ready", () => {
           .put(Routes.applicationGuildCommands(bot.user!.id, guild.id), {
             body: bot.commands,
           })
-          .catch((err) =>
+          .catch(() =>
             bot.logger.error(
               "Error while trying to load commands. Are you missing the Commands permission?"
             )
@@ -152,10 +152,10 @@ bot.on("ready", () => {
   if (bot.config.api.enabled) {
     bot.logger.info("[+] Starting API server");
     bot.pluginCount = 0;
-    prisma.plugin.count().then((count) => {
+    prisma.pluginInfo.count().then((count) => {
       bot.pluginCount = count;
     });
-    new Webserver(bot).start();
+    new WebServer(bot).start();
   }
 
   bot.logger.info("[+] Loaded all modules");

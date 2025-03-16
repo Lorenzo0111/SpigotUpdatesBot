@@ -35,7 +35,7 @@ export async function executor(
     return;
   }
 
-  const plugins = await prisma.plugin.findMany({
+  const plugins = await prisma.pluginPing.findMany({
     where: {
       server: command.guildId!,
     },

@@ -2,6 +2,7 @@ import {
   ChatInputCommandInteraction,
   EmbedBuilder,
   GuildMember,
+  MessageFlags,
   PermissionFlagsBits,
 } from "discord.js";
 import { checkGuild } from "../modules/checker";
@@ -18,7 +19,7 @@ export async function executor(
   }
 
   await command.deferReply({
-    ephemeral: true,
+    flags: [MessageFlags.Ephemeral],
   });
 
   if (
