@@ -2,8 +2,12 @@ const BOOT = new Date().getTime();
 
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { REST } from "@discordjs/rest";
-import { ChannelType, Routes } from "discord-api-types/v10";
-import { ActivityType, Client, IntentsBitField } from "discord.js";
+import {
+  ChannelType,
+  PermissionFlagsBits,
+  Routes,
+} from "discord-api-types/v10";
+import { ActivityType, Client, Events, IntentsBitField } from "discord.js";
 import { readFileSync, readdirSync } from "fs";
 import prisma from "./lib/prisma";
 import type { Config, ExtendedClient } from "./types";
@@ -22,7 +26,6 @@ const bot: ExtendedClient = new Client({
   },
   intents: [
     IntentsBitField.Flags.Guilds,
-    IntentsBitField.Flags.GuildMembers,
     IntentsBitField.Flags.GuildExpressions,
   ],
 }) as ExtendedClient;
@@ -62,6 +65,7 @@ bot.commands = [
         .setDescription("The role to ping when a new update is released")
         .setRequired(false)
     )
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageWebhooks)
     .toJSON(),
 
   new SlashCommandBuilder()
@@ -70,11 +74,13 @@ bot.commands = [
     .addIntegerOption((option) =>
       option.setName("plugin").setDescription("The plugin id").setRequired(true)
     )
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageWebhooks)
     .toJSON(),
 
   new SlashCommandBuilder()
     .setName("list")
     .setDescription("Retrieves the list that the bot checks")
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageWebhooks)
     .toJSON(),
 
   new SlashCommandBuilder()
@@ -96,11 +102,13 @@ bot.commands = [
         .setDescription("The role to ping when a new update is released")
         .setRequired(false)
     )
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageWebhooks)
     .toJSON(),
 
   new SlashCommandBuilder()
     .setName("checknow")
     .setDescription("Forces the check of updates")
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageWebhooks)
     .toJSON(),
 
   new SlashCommandBuilder()
@@ -111,7 +119,7 @@ bot.commands = [
 
 bot.restAPI = new REST({ version: "9" }).setToken(bot.config.token);
 
-bot.on("ready", () => {
+bot.on(Events.ClientReady, () => {
   bot.logger.info(`Logged in as ${bot.user?.tag}.`);
   bot.logger.info(
     `You can invite the bot with the following link: https://discord.com/api/oauth2/authorize?client_id=${

@@ -1,4 +1,8 @@
-import type { Client, REST } from "discord.js";
+import type {
+  Client,
+  REST,
+  RESTPostAPIChatInputApplicationCommandsJSONBody,
+} from "discord.js";
 import type Logger from "./utils/logger";
 
 export type Config = {
@@ -18,7 +22,7 @@ export type ExtendedClient = Client & {
   version: string;
   config: Config;
   logger: Logger;
-  commands: any;
+  commands: RESTPostAPIChatInputApplicationCommandsJSONBody[];
   restAPI: REST;
   pluginCount: number;
   lastCheck?: number;
