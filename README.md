@@ -1,4 +1,4 @@
-# SpigotUpdatesBot
+![Banner](/media/banner.png)
 
 [![Discord](https://img.shields.io/discord/1088775598337433662?label=Discord)](https://discord.gg/HT47UQXBqG)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/Lorenzo0111/SpigotUpdatesBot?label=Version)](https://github.com/Lorenzo0111/SpigotUpdatesBot/releases)
