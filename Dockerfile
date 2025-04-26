@@ -5,6 +5,9 @@ WORKDIR /usr/src/app
 
 LABEL org.opencontainers.image.source=https://github.com/Lorenzo0111/SpigotUpdatesBot
 
+# Install curl
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # install dependencies into temp directory
 # this will cache them and speed up future builds
 FROM base AS install
