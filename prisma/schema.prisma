@@ -27,5 +27,6 @@ model PluginPing {
 
   info PluginInfo? @relation(fields: [pluginId], references: [pluginId], onDelete: Cascade)
 
+  @@unique([server, pluginId, channel, ping])
   @@map("plugins")
 }
