@@ -21,7 +21,7 @@ export async function renderHTML(
                   img.setAttribute('data-img-wrapped', 'true');
                   const object = document.createElement('object');
                   object.setAttribute('type', 'image/png');
-                  object.setAttribute('data', img.src);
+                  object.setAttribute('data', img.getAttribute('data-url') || img.src);
                   object.setAttribute('style', img.getAttribute('style') || '');
                   if (img.hasAttribute('alt'))
                     object.setAttribute('aria-label', img.getAttribute('alt'));
@@ -94,6 +94,10 @@ export async function renderHTML(
                 ]);
         }`,
           timeout: 5000,
+        },
+        viewport: {
+          width: 650,
+          height: 500,
         },
       },
       {
