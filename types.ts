@@ -16,6 +16,7 @@ export type Config = {
   };
   database: string;
   message: string;
+  browserless?: string | null;
 };
 
 export type ExtendedClient = Client & {

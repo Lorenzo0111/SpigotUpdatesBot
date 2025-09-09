@@ -1,5 +1,11 @@
 import type { PluginInfo, PluginPing } from "@prisma/client";
-import { EmbedBuilder, Guild, TextChannel } from "discord.js";
+import {
+  AttachmentBuilder,
+  EmbedBuilder,
+  Guild,
+  TextChannel,
+} from "discord.js";
+import { renderHTML } from "../lib/browserless";
 import prisma from "../lib/prisma";
 import type { ExtendedClient, LatestUpdateResponse } from "../types";
 import axios from "../utils/fetcher";
@@ -77,6 +83,16 @@ async function sendWebhook(
         "/versions/latest"
     );
 
+    const decoded = Buffer.from(response.description, "base64").toString(
+      "utf-8"
+    );
+    const render = await renderHTML(client, decoded);
+    const file = render
+      ? new AttachmentBuilder(Buffer.from(render), {
+          name: "image.png",
+        })
+      : null;
+
     const embed = new EmbedBuilder()
       .setTitle("📰・" + data.name + " Update")
       .setDescription(
@@ -87,6 +103,7 @@ async function sendWebhook(
           .replace("\\n", "\n")
       )
       .setTimestamp()
+      .setImage(file ? "attachment://image.png" : null)
       .setFooter({
         text: "Spigot • Updates",
         iconURL: client.user?.avatarURL() || undefined,
@@ -103,6 +120,7 @@ async function sendWebhook(
             .send({
               content: ping.ping != null ? "<@&" + ping.ping + ">" : undefined,
               embeds: [embed],
+              files: file ? [file] : undefined,
             })
             .catch((e) => {
               client.logger.error(

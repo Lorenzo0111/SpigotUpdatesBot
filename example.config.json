@@ -1,12 +1,13 @@
 {
-    "token": "",
-    "public": false,
-    "api": {
-        "enabled": false,
-        "port": 8080,
-        "topgg": "",
-        "guild": ""
-    },
-	"database": "mongodb://localhost:27017/sub",
-    "message": "**📋・About**\n> Version: {version}\n> Title: {title}\n\n**📦・Download**\n> https://www.spigotmc.org/resources/{plugin}"
+  "token": "",
+  "public": false,
+  "api": {
+    "enabled": false,
+    "port": 8080,
+    "topgg": "",
+    "guild": ""
+  },
+  "database": "mongodb://localhost:27017/sub",
+  "message": "**📋・About**\n> Version: {version}\n> Title: {title}\n\n**📦・Download**\n> https://www.spigotmc.org/resources/{plugin}",
+  "browserless": "https://production-lon.browserless.io/screenshot?token=xxxx"
 }

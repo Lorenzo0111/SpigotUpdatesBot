@@ -20,7 +20,8 @@ export default async (client: ExtendedClient) => {
     try {
       commands.get(command).executor(client, interaction);
     } catch (error) {
-      console.error(error);
+      if (error instanceof Error) client.logger.error(error.message);
+      else client.logger.error(error as string);
     }
   });
 };
