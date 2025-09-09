@@ -30,7 +30,7 @@ const bot: ExtendedClient = new Client({
   ],
 }) as ExtendedClient;
 
-bot.version = "2.0.0";
+bot.version = "2.1.0";
 bot.config = JSON.parse(readFileSync("config.json", "utf-8")) as Config;
 bot.logger = new Logger(console.log);
 
