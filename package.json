@@ -16,7 +16,7 @@
   "dependencies": {
     "@discordjs/builders": "^1.11.3",
     "@discordjs/rest": "^2.6.0",
-    "@prisma/client": "6.15.0",
+    "@prisma/client": "6.19.0",
     "axios": "^1.11.0",
     "chalk": "5.4.1",
     "discord.js": "^14.22.1",
