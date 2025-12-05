@@ -14,17 +14,17 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@discordjs/builders": "^1.11.3",
+    "@discordjs/builders": "^1.13.1",
     "@discordjs/rest": "^2.6.0",
-    "@prisma/client": "6.15.0",
-    "axios": "^1.11.0",
-    "chalk": "5.4.1",
-    "discord.js": "^14.22.1",
-    "hono": "^4.9.6"
+    "@prisma/client": "6",
+    "axios": "^1.13.2",
+    "chalk": "5.6.2",
+    "discord.js": "^14.25.1",
+    "hono": "^4.10.7"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "prisma": "^6.15.0",
-    "typescript": "^5.9.2"
+    "prisma": "6",
+    "typescript": "^5.9.3"
   }
 }
