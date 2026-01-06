@@ -99,6 +99,7 @@ export async function executor(
     client.pluginCount++;
     return;
   } catch (e) {
+    console.error(e);
     command.editReply({
       embeds: [
         new EmbedBuilder()

@@ -74,7 +74,7 @@ export async function executor(
       const element = await prisma.pluginPing.findFirst({
         where: {
           server: command.guildId!.toString(),
-          pluginId: plugin.id,
+          pluginId: plugin.id.toString(),
           channel: channel.id,
         },
       });
@@ -97,10 +97,10 @@ export async function executor(
             info: {
               connectOrCreate: {
                 where: {
-                  pluginId: plugin.id,
+                  pluginId: plugin.id.toString(),
                 },
                 create: {
-                  pluginId: plugin.id,
+                  pluginId: plugin.id.toString(),
                   latest: updateId,
                 },
               },
@@ -127,6 +127,7 @@ export async function executor(
     client.pluginCount += added;
     return;
   } catch (e) {
+    console.error(e);
     command.editReply({
       embeds: [
         new EmbedBuilder()
