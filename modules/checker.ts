@@ -33,7 +33,7 @@ async function checkNow(client: ExtendedClient) {
       pings: true,
     },
   });
-  check(plugins, client);
+  void check(plugins, client);
 }
 
 async function check(plugins: Plugin[], client: ExtendedClient) {
