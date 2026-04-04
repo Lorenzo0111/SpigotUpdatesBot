@@ -24,7 +24,7 @@ export async function checkGuild(guild: Guild, client: ExtendedClient) {
     where: { pings: { some: { server: guild.id } } },
     include: { pings: true },
   });
-  check(plugins, client);
+  void check(plugins, client);
 }
 
 async function checkNow(client: ExtendedClient) {
@@ -47,7 +47,7 @@ async function check(plugins: Plugin[], client: ExtendedClient) {
       const { data } = await axios.get(
         "https://api.spiget.org/v2/resources/" +
           encodeURIComponent(plugin.pluginId) +
-          "/updates/latest?size=1"
+          `/updates/latest?size=1&cb=${Date.now()}`,
       );
       if (plugin.latest != data.id) {
         plugin.latest = data.id;
@@ -68,23 +68,23 @@ async function check(plugins: Plugin[], client: ExtendedClient) {
 async function sendWebhook(
   client: ExtendedClient,
   plugin: Plugin,
-  response: LatestUpdateResponse
+  response: LatestUpdateResponse,
 ) {
   try {
     client.logger.info("[・] Sending message for " + plugin.pluginId);
 
     const { data } = await axios.get(
       "https://api.spiget.org/v2/resources/" +
-        encodeURIComponent(plugin.pluginId)
+        encodeURIComponent(plugin.pluginId),
     );
     const version = await axios.get(
       "https://api.spiget.org/v2/resources/" +
         encodeURIComponent(plugin.pluginId) +
-        "/versions/latest"
+        "/versions/latest",
     );
 
     const decoded = Buffer.from(response.description, "base64").toString(
-      "utf-8"
+      "utf-8",
     );
     const render = await renderHTML(client, decoded);
     const file = render
@@ -100,7 +100,7 @@ async function sendWebhook(
           .replace("{version}", version.data.name)
           .replace("{title}", response.title)
           .replace("{plugin}", plugin.pluginId)
-          .replace("\\n", "\n")
+          .replace("\\n", "\n"),
       )
       .setTimestamp()
       .setImage(file ? "attachment://image.png" : null)
@@ -124,7 +124,7 @@ async function sendWebhook(
             })
             .catch((e) => {
               client.logger.error(
-                `Cannot send message for ${data.name}. Aborting..`
+                `Cannot send message for ${data.name}. Aborting..`,
               );
             });
         } else {

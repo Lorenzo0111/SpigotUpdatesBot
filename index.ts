@@ -1,13 +1,18 @@
 const BOOT = new Date().getTime();
 
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { REST } from "@discordjs/rest";
 import {
   ChannelType,
   PermissionFlagsBits,
   Routes,
 } from "discord-api-types/v10";
-import { ActivityType, Client, Events, IntentsBitField } from "discord.js";
+import {
+  ActivityType,
+  Client,
+  Events,
+  IntentsBitField,
+  REST,
+} from "discord.js";
 import { readFileSync, readdirSync } from "fs";
 import prisma from "./lib/prisma";
 import type { Config, ExtendedClient } from "./types";
@@ -42,7 +47,7 @@ bot.commands = [
       option
         .setName("plugin")
         .setDescription("The plugin name")
-        .setRequired(true)
+        .setRequired(true),
     )
     .toJSON(),
 
@@ -50,20 +55,23 @@ bot.commands = [
     .setName("add")
     .setDescription("Adds a plugin to the list to check")
     .addIntegerOption((option) =>
-      option.setName("plugin").setDescription("The plugin id").setRequired(true)
+      option
+        .setName("plugin")
+        .setDescription("The plugin id")
+        .setRequired(true),
     )
     .addChannelOption((option) =>
       option
         .setName("channel")
         .setDescription("The channel id")
         .setRequired(true)
-        .addChannelTypes(ChannelType.GuildText, ChannelType.GuildNews)
+        .addChannelTypes(ChannelType.GuildText, ChannelType.GuildNews),
     )
     .addRoleOption((option) =>
       option
         .setName("ping")
         .setDescription("The role to ping when a new update is released")
-        .setRequired(false)
+        .setRequired(false),
     )
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageWebhooks)
     .toJSON(),
@@ -72,7 +80,10 @@ bot.commands = [
     .setName("remove")
     .setDescription("Removes a plugin from the list to check")
     .addIntegerOption((option) =>
-      option.setName("plugin").setDescription("The plugin id").setRequired(true)
+      option
+        .setName("plugin")
+        .setDescription("The plugin id")
+        .setRequired(true),
     )
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageWebhooks)
     .toJSON(),
@@ -87,20 +98,20 @@ bot.commands = [
     .setName("addowner")
     .setDescription("Adds all the plugins of an user to the list to check")
     .addIntegerOption((option) =>
-      option.setName("user").setDescription("The user id").setRequired(true)
+      option.setName("user").setDescription("The user id").setRequired(true),
     )
     .addChannelOption((option) =>
       option
         .setName("channel")
         .setDescription("The channel id")
         .setRequired(true)
-        .addChannelTypes(ChannelType.GuildText, ChannelType.GuildNews)
+        .addChannelTypes(ChannelType.GuildText, ChannelType.GuildNews),
     )
     .addRoleOption((option) =>
       option
         .setName("ping")
         .setDescription("The role to ping when a new update is released")
-        .setRequired(false)
+        .setRequired(false),
     )
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageWebhooks)
     .toJSON(),
@@ -117,14 +128,14 @@ bot.commands = [
     .toJSON(),
 ];
 
-bot.restAPI = new REST({ version: "9" }).setToken(bot.config.token);
+bot.restAPI = new REST({ version: "10" }).setToken(bot.config.token);
 
 bot.on(Events.ClientReady, () => {
   bot.logger.info(`Logged in as ${bot.user?.tag}.`);
   bot.logger.info(
     `You can invite the bot with the following link: https://discord.com/api/oauth2/authorize?client_id=${
       bot.user!.id
-    }&permissions=537151488&scope=bot%20applications.commands`
+    }&permissions=537151488&scope=bot%20applications.commands`,
   );
 
   readdirSync("modules")
@@ -144,12 +155,12 @@ bot.on(Events.ClientReady, () => {
           })
           .catch(() =>
             bot.logger.error(
-              "Error while trying to load commands. Are you missing the Commands permission?"
-            )
+              "Error while trying to load commands. Are you missing the Commands permission?",
+            ),
           );
       } catch (error) {
         bot.logger.error(
-          "Error while trying to load commands. Are you missing the Commands permission?"
+          "Error while trying to load commands. Are you missing the Commands permission?",
         );
       }
     });
@@ -168,7 +179,7 @@ bot.on(Events.ClientReady, () => {
 
   bot.logger.info("[+] Loaded all modules");
   bot.logger.info(
-    "[+] Ready in " + (new Date().getTime() - BOOT) / 1000 + " seconds!"
+    "[+] Ready in " + (new Date().getTime() - BOOT) / 1000 + " seconds!",
   );
 });
 

@@ -1,5 +1,5 @@
-import prisma from "./lib/prisma";
-import Logger from "./utils/logger";
+import prisma from "../lib/prisma";
+import Logger from "../utils/logger";
 
 async function main() {
   const logger = new Logger(console.log);
@@ -15,7 +15,7 @@ async function main() {
 
   const unique = new Set(pings.map((ping) => ping.pluginId));
   logger.info(
-    `Found ${unique.size} unique plugins: ${Array.from(unique).join(", ")}`
+    `Found ${unique.size} unique plugins: ${Array.from(unique).join(", ")}`,
   );
 
   const queries: Promise<any>[] = [];
@@ -37,9 +37,9 @@ async function main() {
         })
         .then(() => {
           logger.info(
-            `Migrated plugin ${plugin} (${index + 1}/${unique.size})`
+            `Migrated plugin ${plugin} (${index + 1}/${unique.size})`,
           );
-        })
+        }),
     );
   }
 
